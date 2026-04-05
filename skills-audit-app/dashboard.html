@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills Audit Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1a1a2e;
+      --blue: #4361ee;
+      --blue-light: #e8edff;
+      --green: #2d6a4f;
+      --green-light: #d8f3dc;
+      --red: #d00000;
+      --red-light: #fde8e8;
+      --amber: #e85d04;
+      --amber-light: #fff3cd;
+      --white: #ffffff;
+      --off-white: #fafafa;
+      --ui-50: #f5f5f5;
+      --ui-100: #e8e8e8;
+      --ui-200: #d4d4d4;
+      --ui-300: #b0b0b0;
+      --ui-400: #8a8a8a;
+      --ui-500: #6b6b6b;
+      --ui-600: #4a4a4a;
+      --ui-700: #2d2d2d;
+      --ui-800: #1a1a1a;
+      --font: 'Inter', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      background: var(--off-white);
+      color: var(--ui-800);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .dashboard {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .header .refresh-btn {
+      padding: 6px 14px;
+      border: 1px solid var(--ui-200);
+      border-radius: 8px;
+      background: var(--white);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ui-600);
+      cursor: pointer;
+    }
+    .header .refresh-btn:hover { background: var(--ui-50); }
+    .auto-refresh {
+      font-size: 11px;
+      color: var(--ui-400);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pulse {
+      width: 8px; height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Summary */
+    .summary {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+      padding: 16px 8px;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--ui-100);
+    }
+    .stat-num {
+      display: block;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--ui-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+    .stat-red { color: var(--red); }
+    .stat-green { color: var(--green); }
+    .stat-blue { color: var(--blue); }
+
+    .meta {
+      font-size: 12px;
+      color: var(--ui-400);
+      margin-bottom: 16px;
+    }
+
+    /* Section */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--ui-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 20px 0 8px;
+    }
+
+    /* Issue cards */
+    .issue {
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      border: 1px solid;
+    }
+    .issue-overlap { background: var(--red-light); border-color: #f5c6c6; }
+    .issue-vague { background: var(--amber-light); border-color: #ffe0a3; }
+    .issue-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .issue-tag {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--white);
+    }
+    .tag-overlap { background: var(--red); }
+    .tag-vague { background: var(--amber); }
+    .issue-name { font-size: 14px; font-weight: 600; }
+    .issue-detail {
+      font-size: 12px;
+      color: var(--ui-600);
+      line-height: 1.5;
+    }
+    .similarity { font-weight: 700; color: var(--red); }
+    .desc-quote {
+      margin-top: 4px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--ui-500);
+      font-style: italic;
+    }
+
+    /* Passed */
+    .passed-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--green-light);
+      border-radius: 8px;
+      margin-bottom: 4px;
+      border: 1px solid #b7e4c7;
+    }
+    .check { color: var(--green); font-weight: 700; font-size: 16px; }
+    .passed-name { font-size: 13px; font-weight: 600; color: var(--green); }
+
+    /* Empty */
+    .empty {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--ui-400);
+    }
+    .empty code {
+      display: inline-block;
+      background: var(--ui-800);
+      color: #a5f3a5;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    /* All clear */
+    .all-clear {
+      text-align: center;
+      padding: 32px;
+      background: var(--green-light);
+      border-radius: 12px;
+      border: 1px solid #b7e4c7;
+      margin-top: 16px;
+    }
+    .all-clear-icon { font-size: 36px; margin-bottom: 8px; }
+    .all-clear-text { font-size: 16px; font-weight: 600; color: var(--green); }
+
+    @media (max-width: 480px) {
+      body { padding: 16px 8px; }
+      .summary { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="header">
+    <h1>Skills Audit Dashboard</h1>
+    <button class="refresh-btn" onclick="loadReport()">Refresh</button>
+  </div>
+  <div class="auto-refresh">
+    <span class="pulse"></span>
+    Auto-refreshes every 30s
+  </div>
+
+  <div id="content">
+    <div class="empty">
+      <p>Loading report...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Config — reads from localStorage or falls back to defaults
+  const config = JSON.parse(localStorage.getItem('skillsAuditConfig') || 'null') || {
+    owner: 'cjaynyc',
+    repo: 'cjaynyc.github.io',
+    branch: 'main',
+    skillsPath: 'skills-audit-app/skills'
+  };
+
+  const ghAPI = 'https://api.github.com';
+
+  async function ghFetch(path) {
+    const url = `${ghAPI}/repos/${config.owner}/${config.repo}/contents/${path}?ref=${config.branch}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    return res.json();
+  }
+
+  function esc(text) {
+    const d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+  }
+
+  async function loadReport() {
+    const reportsPath = config.skillsPath.replace(/\/skills$/, '') + '/audit-reports';
+    const container = document.getElementById('content');
+
+    try {
+      const items = await ghFetch(reportsPath);
+      if (!items || !Array.isArray(items)) { showEmpty(container); return; }
+
+      const reports = items.filter(f => f.name.endsWith('.json')).sort((a, b) => b.name.localeCompare(a.name));
+      if (!reports.length) { showEmpty(container); return; }
+
+      const latest = await ghFetch(`${reportsPath}/${reports[0].name}`);
+      if (!latest) { showEmpty(container); return; }
+
+      const report = JSON.parse(atob(latest.content));
+      render(report, container);
+    } catch (err) {
+      // Try local file
+      try {
+        const res = await fetch('audit-reports/latest.json');
+        if (res.ok) {
+          const report = await res.json();
+          render(report, container);
+          return;
+        }
+      } catch (_) {}
+      showEmpty(container);
+    }
+  }
+
+  function showEmpty(container) {
+    container.innerHTML = `
+      <div class="empty">
+        <p>No audit report found.</p>
+        <p>Run the audit first:</p>
+        <code>python audit.py --all</code>
+      </div>`;
+  }
+
+  function render(report, container) {
+    const overlaps = report.issues?.overlaps || [];
+    const vague = report.issues?.vague || [];
+    const total = overlaps.length + vague.length;
+    const count = report.skills_audited || 0;
+    const flagged = new Set();
+    overlaps.forEach(o => { flagged.add(o.skill_a); flagged.add(o.skill_b); });
+    vague.forEach(v => flagged.add(v.skill));
+    const passed = Math.max(0, count - flagged.size);
+
+    const ts = report.timestamp ? new Date(report.timestamp) : null;
+    const timeStr = ts
+      ? ts.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+        ' at ' + ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+      : 'Unknown';
+
+    let html = `
+      <div class="summary">
+        <div class="stat">
+          <span class="stat-num stat-blue">${count}</span>
+          <span class="stat-label">Skills Scanned</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num stat-red">${total}</span>
+          <span class="stat-label">Issues</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num stat-green">${passed}</span>
+          <span class="stat-label">Passed</span>
+        </div>
+      </div>
+      <div class="meta">Last audit: ${timeStr}</div>`;
+
+    if (total === 0) {
+      html += `
+        <div class="all-clear">
+          <div class="all-clear-icon">&#10003;</div>
+          <div class="all-clear-text">All skills are clean. No issues found.</div>
+        </div>`;
+    } else {
+      html += '<div class="section-title">Issues Found</div>';
+
+      overlaps.forEach(o => {
+        html += `
+          <div class="issue issue-overlap">
+            <div class="issue-head">
+              <span class="issue-tag tag-overlap">Overlap</span>
+              <span class="issue-name">${esc(o.skill_a)} &harr; ${esc(o.skill_b)}</span>
+            </div>
+            <div class="issue-detail">
+              <span class="similarity">${o.similarity}% similar</span>
+              <div class="desc-quote">&ldquo;${esc((o.desc_a || '').substring(0, 120))}&rdquo;</div>
+              <div class="desc-quote">&ldquo;${esc((o.desc_b || '').substring(0, 120))}&rdquo;</div>
+            </div>
+          </div>`;
+      });
+
+      vague.forEach(v => {
+        html += `
+          <div class="issue issue-vague">
+            <div class="issue-head">
+              <span class="issue-tag tag-vague">Vague</span>
+              <span class="issue-name">${esc(v.skill)}</span>
+            </div>
+            <div class="issue-detail">
+              ${esc((v.problems || []).join(', '))}
+              ${v.description ? `<div class="desc-quote">&ldquo;${esc(v.description.substring(0, 120))}&rdquo;</div>` : ''}
+            </div>
+          </div>`;
+      });
+    }
+
+    if (passed > 0) {
+      html += '<div class="section-title">Passed</div>';
+      html += `<div class="passed-item">
+        <span class="check">&#10003;</span>
+        <span class="passed-name">${passed} skill(s) passed all checks</span>
+      </div>`;
+    }
+
+    container.innerHTML = html;
+  }
+
+  // Load on init and auto-refresh
+  loadReport();
+  setInterval(loadReport, 30000);
+</script>
+</body>
+</html>

@@ -16,6 +16,8 @@ import re
 import sys
 import json
 import math
+import time
+import shutil
 import argparse
 from datetime import datetime
 from collections import Counter
@@ -375,14 +377,121 @@ def save_report(skills, overlaps, vague) -> Path:
     return report_path
 
 
+# ── Terminal Dashboard (--watch mode) ──
+def terminal_dashboard(interval: int = 10):
+    """Live-updating terminal dashboard for tmux/screen."""
+    while True:
+        try:
+            # Clear screen
+            os.system("clear" if os.name != "nt" else "cls")
+            cols = shutil.get_terminal_size().columns
+
+            skills = find_skill_files(SKILLS_ROOT)
+            overlaps = check_overlaps(skills) if skills else []
+            vague = check_vague(skills) if skills else []
+            total_issues = len(overlaps) + len(vague)
+
+            flagged = set()
+            for o in overlaps:
+                flagged.add(o["skill_a"])
+                flagged.add(o["skill_b"])
+            for v in vague:
+                flagged.add(v["skill"])
+            passed = len(skills) - len(flagged)
+
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            # Header
+            title = " SKILLS AUDIT DASHBOARD "
+            pad = max(0, (cols - len(title)) // 2)
+            print(colorize("=" * cols, C.DIM))
+            print(f"{' ' * pad}{colorize(title, C.BOLD)}")
+            print(colorize("=" * cols, C.DIM))
+            print(f"  {colorize('Last scan:', C.DIM)} {now}    {colorize('Refreshing every', C.DIM)} {interval}s    {colorize('Ctrl+C to exit', C.DIM)}")
+            print()
+
+            # Summary boxes
+            box_w = min(18, (cols - 8) // 3)
+            def box(label, value, color):
+                val_str = str(value).center(box_w - 2)
+                lbl_str = label.center(box_w - 2)
+                lines = [
+                    colorize("+" + "-" * (box_w - 2) + "+", C.DIM),
+                    colorize("|", C.DIM) + colorize(val_str, color) + colorize("|", C.DIM),
+                    colorize("|", C.DIM) + colorize(lbl_str, C.DIM) + colorize("|", C.DIM),
+                    colorize("+" + "-" * (box_w - 2) + "+", C.DIM),
+                ]
+                return lines
+
+            b1 = box("SCANNED", len(skills), C.BLUE)
+            b2 = box("ISSUES", total_issues, C.RED if total_issues > 0 else C.GREEN)
+            b3 = box("PASSED", max(0, passed), C.GREEN)
+
+            for i in range(4):
+                print(f"  {b1[i]}  {b2[i]}  {b3[i]}")
+            print()
+
+            # Issues
+            if overlaps:
+                print(f"  {colorize('OVERLAPS', C.RED)}")
+                print(f"  {colorize('-' * 50, C.DIM)}")
+                for o in overlaps:
+                    sim_pct = o['similarity']
+                    print(f"  {colorize('!', C.RED)} {colorize(o['skill_a'], C.BOLD)} <-> {colorize(o['skill_b'], C.BOLD)}  {colorize(f'{sim_pct}%', C.RED)}")
+                    desc_a = o['desc_a'][:60] if o['desc_a'] else ''
+                    desc_b = o['desc_b'][:60] if o['desc_b'] else ''
+                    print(f"    {colorize(desc_a, C.DIM)}")
+                    print(f"    {colorize(desc_b, C.DIM)}")
+                print()
+
+            if vague:
+                print(f"  {colorize('VAGUE / INCOMPLETE', C.YELLOW)}")
+                print(f"  {colorize('-' * 50, C.DIM)}")
+                for v in vague:
+                    problems = ", ".join(v["problems"])
+                    print(f"  {colorize('!', C.YELLOW)} {colorize(v['skill'], C.BOLD)}  {colorize(problems, C.DIM)}")
+                print()
+
+            # Passed skills
+            if passed > 0:
+                print(f"  {colorize('PASSED', C.GREEN)}")
+                print(f"  {colorize('-' * 50, C.DIM)}")
+                for s in skills:
+                    if s["name"] not in flagged:
+                        scope_tag = f"[{s['scope']}]"
+                        if s["project"]:
+                            scope_tag = f"[{s['project']}]"
+                        print(f"  {colorize('OK', C.GREEN)} {s['name']}  {colorize(scope_tag, C.DIM)}")
+                print()
+
+            if total_issues == 0:
+                print(f"  {colorize('All skills are clean. No issues found.', C.GREEN)}")
+                print()
+
+            # Footer
+            print(colorize("-" * cols, C.DIM))
+            print(f"  {colorize('Fix issues:', C.DIM)} Open Claude Code and say {colorize('fix audit issues', C.CYAN)}")
+            print(colorize("-" * cols, C.DIM))
+
+            time.sleep(interval)
+
+        except KeyboardInterrupt:
+            print(f"\n{colorize('Dashboard stopped.', C.DIM)}")
+            break
+
+
 # ── CLI ──
 def main():
     parser = argparse.ArgumentParser(description="Skills Audit Tool")
     parser.add_argument("--all", action="store_true", help="Audit all skills without prompts")
     parser.add_argument("--path", type=str, help="Path to scan (relative to repo root or absolute)")
+    parser.add_argument("--watch", action="store_true", help="Live terminal dashboard (for tmux)")
+    parser.add_argument("--interval", type=int, default=10, help="Refresh interval for --watch (seconds)")
     args = parser.parse_args()
 
-    if args.all:
+    if args.watch:
+        terminal_dashboard(args.interval)
+    elif args.all:
         skills = find_skill_files(SKILLS_ROOT)
         if not skills:
             print(colorize("No skills found.", C.YELLOW))

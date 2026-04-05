@@ -313,6 +313,146 @@ async function createProject() {
   }
 }
 
+// ── View switching ──
+function switchView(el) {
+  document.querySelectorAll('.tabs > .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const view = el.dataset.view;
+  document.getElementById('skillsView').style.display = view === 'skills' ? 'block' : 'none';
+  document.getElementById('dashboardView').style.display = view === 'dashboard' ? 'block' : 'none';
+  if (view === 'dashboard') loadDashboard();
+}
+
+// ── Dashboard ──
+async function loadDashboard() {
+  const reportsPath = config.skillsPath.replace(/\/skills$/, '') + '/audit-reports';
+
+  try {
+    const items = await ghFetch(reportsPath);
+    if (!items || !Array.isArray(items)) {
+      showEmptyDashboard();
+      return;
+    }
+
+    // Find the latest JSON report
+    const reports = items
+      .filter(f => f.name.endsWith('.json'))
+      .sort((a, b) => b.name.localeCompare(a.name));
+
+    if (reports.length === 0) {
+      showEmptyDashboard();
+      return;
+    }
+
+    const latest = await ghFetch(`${reportsPath}/${reports[0].name}`);
+    if (!latest) {
+      showEmptyDashboard();
+      return;
+    }
+
+    const report = JSON.parse(atob(latest.content));
+    renderDashboard(report, reports[0].name);
+  } catch (err) {
+    console.error('Failed to load dashboard:', err);
+    // Fallback: try reading from local audit-reports via the repo
+    showEmptyDashboard();
+  }
+}
+
+function showEmptyDashboard() {
+  document.getElementById('dashSkillCount').textContent = '-';
+  document.getElementById('dashIssueCount').textContent = '-';
+  document.getElementById('dashPassedCount').textContent = '-';
+  document.getElementById('dashTimestamp').textContent = 'No audit report found. Run: python audit.py --all';
+  document.getElementById('dashIssues').innerHTML = '';
+  document.getElementById('dashPassed').innerHTML = '';
+  document.getElementById('issuesBadge').style.display = 'none';
+}
+
+function renderDashboard(report, filename) {
+  const overlaps = report.issues?.overlaps || [];
+  const vague = report.issues?.vague || [];
+  const totalIssues = overlaps.length + vague.length;
+  const skillCount = report.skills_audited || 0;
+
+  // Collect flagged skill names
+  const flagged = new Set();
+  overlaps.forEach(o => { flagged.add(o.skill_a); flagged.add(o.skill_b); });
+  vague.forEach(v => { flagged.add(v.skill); });
+  const passed = skillCount - flagged.size;
+
+  // Summary
+  document.getElementById('dashSkillCount').textContent = skillCount;
+  document.getElementById('dashIssueCount').textContent = totalIssues;
+  document.getElementById('dashPassedCount').textContent = Math.max(0, passed);
+
+  // Badge
+  const badge = document.getElementById('issuesBadge');
+  if (totalIssues > 0) {
+    badge.textContent = totalIssues;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Timestamp
+  const ts = report.timestamp ? new Date(report.timestamp) : null;
+  const timeStr = ts
+    ? ts.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+      ' at ' + ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+    : filename;
+  document.getElementById('dashTimestamp').textContent = `Last audit: ${timeStr}`;
+
+  // Issues
+  let issuesHtml = '';
+  if (totalIssues > 0) {
+    issuesHtml += '<div class="dash-section-title">Issues Found</div>';
+  }
+
+  overlaps.forEach(o => {
+    issuesHtml += `
+      <div class="dash-issue dash-issue-overlap">
+        <div class="dash-issue-header">
+          <span class="dash-issue-type type-overlap">Overlap</span>
+          <span class="dash-issue-title">${escapeHtml(o.skill_a)} &harr; ${escapeHtml(o.skill_b)}</span>
+        </div>
+        <div class="dash-issue-body">
+          <span class="similarity">${o.similarity}% similar</span>
+          <div class="dash-issue-desc">&ldquo;${escapeHtml((o.desc_a || '').substring(0, 100))}&rdquo;</div>
+          <div class="dash-issue-desc">&ldquo;${escapeHtml((o.desc_b || '').substring(0, 100))}&rdquo;</div>
+        </div>
+      </div>`;
+  });
+
+  vague.forEach(v => {
+    const problems = (v.problems || []).join(', ');
+    issuesHtml += `
+      <div class="dash-issue dash-issue-vague">
+        <div class="dash-issue-header">
+          <span class="dash-issue-type type-vague">Vague</span>
+          <span class="dash-issue-title">${escapeHtml(v.skill)}</span>
+        </div>
+        <div class="dash-issue-body">
+          ${escapeHtml(problems)}
+          ${v.description ? `<div class="dash-issue-desc">&ldquo;${escapeHtml(v.description.substring(0, 100))}&rdquo;</div>` : ''}
+        </div>
+      </div>`;
+  });
+
+  document.getElementById('dashIssues').innerHTML = issuesHtml;
+
+  // Passed (we don't have individual names from the report, show count)
+  let passedHtml = '';
+  if (passed > 0) {
+    passedHtml += '<div class="dash-section-title">Passed</div>';
+    passedHtml += `<div class="dash-passed-item">
+      <span class="dash-passed-check">&check;</span>
+      <span class="dash-passed-name">${passed} skill(s) passed all checks</span>
+    </div>`;
+  }
+  document.getElementById('dashPassed').innerHTML = passedHtml;
+}
+
 // ── Utility ──
 function escapeHtml(text) {
   const div = document.createElement('div');
