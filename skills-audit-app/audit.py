@@ -203,6 +203,14 @@ def check_overlaps(skills: list[dict]) -> list[dict]:
         for j in range(i + 1, len(skills)):
             if not descriptions[i] or not descriptions[j]:
                 continue
+            # Skip overlap between skills with the same name in different scopes
+            # or different projects — project skills intentionally override globals,
+            # and sibling projects may share identical conventions
+            if skills[i]["name"] == skills[j]["name"] and (
+                skills[i]["scope"] != skills[j]["scope"]
+                or skills[i]["project"] != skills[j]["project"]
+            ):
+                continue
             sim = cosine_similarity(vectors[i], vectors[j])
             if sim >= SIMILARITY_THRESHOLD:
                 overlaps.append({
