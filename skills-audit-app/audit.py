@@ -11,6 +11,8 @@ Usage:
     python audit.py --path skills/global  # audit a specific folder
 """
 
+from __future__ import annotations
+
 import os
 import re
 import sys
@@ -338,7 +340,10 @@ def run_audit(skills: list[dict], save: bool = True):
     # Save report
     if save and total_issues > 0:
         report = save_report(skills, overlaps, vague)
-        if prompt_yn(f"Save report to {report}?"):
+        if not sys.stdin.isatty():
+            # Non-interactive: auto-save
+            print(f"\n{colorize('Report saved to:', C.GREEN)} {report}\n")
+        elif prompt_yn(f"Save report to {report}?"):
             print(f"\n{colorize('Report saved.', C.GREEN)}")
             print(f"Open Claude Code and say: {colorize('fix audit issues', C.CYAN)}")
             print(f"Claude will read {colorize(str(report), C.DIM)} and walk you through fixes.\n")
