@@ -28,6 +28,7 @@ from pathlib import Path
 # ── Constants ──
 SKILLS_ROOT = Path(__file__).parent / "claude-skills"
 REPORTS_DIR = Path(__file__).parent / "audit-reports"
+DEV_ROOT = Path.home() / "Library" / "CloudStorage" / "OneDrive-AdventInternational" / "Documents" / "Projects" / "Development"
 SIMILARITY_THRESHOLD = 0.65
 MIN_DESCRIPTION_WORDS = 5
 
@@ -82,6 +83,57 @@ def find_skill_files(root: Path) -> list[dict]:
             "trigger": trigger,
             "content": content,
         })
+    return skills
+
+
+def find_command_files(dev_root: Path) -> list[dict]:
+    """Find all .claude/commands/*.md files under active Development projects.
+
+    If dev_root itself contains .claude/commands/, treat it as a single project.
+    Otherwise, scan its children as project directories.
+    """
+    skills = []
+    if not dev_root.exists():
+        return skills
+
+    # Check if dev_root itself is a project with commands
+    if (dev_root / ".claude" / "commands").exists():
+        project_dirs = [dev_root]
+    else:
+        project_dirs = sorted(
+            d for d in dev_root.iterdir()
+            if d.is_dir() and not d.name.startswith(("_", "."))
+        )
+
+    for project_dir in project_dirs:
+        commands_dir = project_dir / ".claude" / "commands"
+        if not commands_dir.exists():
+            continue
+        for cmd_md in sorted(commands_dir.glob("*.md")):
+            content = cmd_md.read_text(encoding="utf-8")
+            # Extract title from first # heading
+            title_match = re.search(r"^#\s+(.+)", content, re.MULTILINE)
+            title = title_match.group(1).strip() if title_match else cmd_md.stem
+            # Extract description: first non-empty, non-heading line after the title
+            desc = ""
+            for line in content.split("\n"):
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                desc = line
+                break
+            # Extract steps section as trigger equivalent
+            trigger = extract_section(content, "Steps")
+
+            skills.append({
+                "name": cmd_md.stem,
+                "scope": "command",
+                "project": project_dir.name,
+                "path": str(cmd_md),
+                "description": desc,
+                "trigger": trigger,
+                "content": content,
+            })
     return skills
 
 
@@ -239,41 +291,47 @@ def interactive_audit():
     print(colorize("=" * 40, C.DIM))
 
     # 1. Select scope
-    scopes = ["All skills", "Global only"]
+    scopes = ["All skills (central + project commands)", "Central skills only", "Project commands only", "Global only"]
 
-    # Find projects
+    # Find central projects
     projects_dir = SKILLS_ROOT / "projects"
     project_names = []
     if projects_dir.exists():
         project_names = [d.name for d in projects_dir.iterdir() if d.is_dir() and d.name != ".gitkeep"]
 
     for p in project_names:
-        scopes.append(f"Project: {p}")
+        scopes.append(f"Central project: {p}")
+
+    # Find dev projects with commands
+    dev_project_names = []
+    if DEV_ROOT.exists():
+        for d in sorted(DEV_ROOT.iterdir()):
+            if d.is_dir() and not d.name.startswith(("_", ".")) and (d / ".claude" / "commands").exists():
+                dev_project_names.append(d.name)
+
+    for p in dev_project_names:
+        scopes.append(f"Dev project: {p}")
 
     scope_idx = prompt_choice("Select scope:", scopes)
 
-    # Determine search root
+    # 2. Find skills based on scope
     if scope_idx == 0:
-        search_root = SKILLS_ROOT
-        include_global_cross_check = True
+        all_skills = find_skill_files(SKILLS_ROOT) + find_command_files(DEV_ROOT)
     elif scope_idx == 1:
-        search_root = SKILLS_ROOT / "global"
-        include_global_cross_check = False
-    else:
-        project = project_names[scope_idx - 2]
-        search_root = SKILLS_ROOT / "projects" / project
-        include_global_cross_check = True
-
-    # 2. Find skills
-    if scope_idx == 0:
         all_skills = find_skill_files(SKILLS_ROOT)
-    elif include_global_cross_check and scope_idx > 1:
-        # Load project skills + global for cross-check
+    elif scope_idx == 2:
+        all_skills = find_command_files(DEV_ROOT)
+    elif scope_idx == 3:
+        all_skills = find_skill_files(SKILLS_ROOT / "global")
+    elif scope_idx < 4 + len(project_names):
+        project = project_names[scope_idx - 4]
+        search_root = SKILLS_ROOT / "projects" / project
         project_skills = find_skill_files(search_root)
         global_skills = find_skill_files(SKILLS_ROOT / "global")
         all_skills = project_skills + global_skills
     else:
-        all_skills = find_skill_files(search_root)
+        dev_project = dev_project_names[scope_idx - 4 - len(project_names)]
+        all_skills = find_command_files(DEV_ROOT / dev_project)
 
     if not all_skills:
         print(f"\n{colorize('No skills found in the selected scope.', C.YELLOW)}")
@@ -281,7 +339,7 @@ def interactive_audit():
 
     # 3. Select which skills to audit
     skill_labels = [
-        f"{s['name']} ({colorize(s['scope'], C.BLUE)}{(' / ' + s['project']) if s['project'] else ''})"
+        f"{s['name']} ({colorize(s['scope'], C.BLUE if s['scope'] != 'command' else C.CYAN)}{(' / ' + s['project']) if s['project'] else ''})"
         for s in all_skills
     ]
 
@@ -391,7 +449,7 @@ def terminal_dashboard(interval: int = 10):
             os.system("clear" if os.name != "nt" else "cls")
             cols = shutil.get_terminal_size().columns
 
-            skills = find_skill_files(SKILLS_ROOT)
+            skills = find_skill_files(SKILLS_ROOT) + find_command_files(DEV_ROOT)
             overlaps = check_overlaps(skills) if skills else []
             vague = check_vague(skills) if skills else []
             total_issues = len(overlaps) + len(vague)
@@ -498,13 +556,17 @@ def main():
         terminal_dashboard(args.interval)
     elif args.all:
         skills = find_skill_files(SKILLS_ROOT)
-        if not skills:
+        commands = find_command_files(DEV_ROOT)
+        all_skills = skills + commands
+        if not all_skills:
             print(colorize("No skills found.", C.YELLOW))
             sys.exit(0)
+        central = len(skills)
+        local = len(commands)
         print(f"\n{colorize('Skills Audit', C.BOLD)} (all skills)")
         print(colorize("=" * 40, C.DIM))
-        print(f"Found {len(skills)} skill(s).\n")
-        run_audit(skills)
+        print(f"Found {len(all_skills)} skill(s) ({central} central, {local} project commands).\n")
+        run_audit(all_skills)
     elif args.path:
         p = Path(args.path)
         if not p.is_absolute():
