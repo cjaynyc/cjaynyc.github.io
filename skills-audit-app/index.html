@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills Audit — Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <!-- Header -->
+  <header class="app-header">
+    <h1>Skills Audit</h1>
+    <p class="subtitle">Manager vs. Specialist</p>
+  </header>
+
+  <!-- Setup Panel (shown if no repo configured) -->
+  <div id="setupPanel" class="card">
+    <div class="card-header">
+      <span class="title">Connect to GitHub</span>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label>Repository Owner</label>
+        <input type="text" id="repoOwner" placeholder="cjaynyc" />
+      </div>
+      <div class="field">
+        <label>Repository Name</label>
+        <input type="text" id="repoName" placeholder="cjaynyc.github.io" />
+      </div>
+      <div class="field">
+        <label>Branch</label>
+        <input type="text" id="repoBranch" placeholder="main" value="main" />
+      </div>
+      <div class="field">
+        <label>Skills Path (in repo)</label>
+        <input type="text" id="skillsPath" placeholder="skills-audit-app/skills" value="skills-audit-app/skills" />
+      </div>
+      <button class="btn btn-primary" onclick="connectRepo()">Connect</button>
+    </div>
+  </div>
+
+  <!-- Main UI (hidden until connected) -->
+  <div id="mainUI" style="display:none;">
+
+    <!-- Scope Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-scope="global" onclick="switchScope(this)">Global</button>
+      <button class="tab" data-scope="projects" onclick="switchScope(this)">
+        Projects <span id="projectCount" class="badge">0</span>
+      </button>
+    </div>
+
+    <!-- Project Selector (hidden when Global selected) -->
+    <div id="projectSelector" style="display:none;">
+      <div class="field">
+        <label>Select Project</label>
+        <select id="projectDropdown" onchange="loadProjectSkills()">
+          <option value="">— choose —</option>
+        </select>
+      </div>
+      <button class="btn btn-sm" onclick="showNewProjectModal()">+ New Project</button>
+    </div>
+
+    <!-- Skills List -->
+    <div class="card">
+      <div class="card-header">
+        <span class="title" id="skillsTitle">Global Skills</span>
+        <button class="btn btn-sm btn-header" onclick="showNewSkillModal()">+ New Skill</button>
+      </div>
+      <div class="card-body">
+        <div id="skillsList" class="skills-list">
+          <p class="empty-state">Loading skills...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Detail Panel -->
+    <div id="skillDetail" class="card" style="display:none; margin-top:16px;">
+      <div class="card-header">
+        <span class="title" id="detailTitle">Skill Detail</span>
+        <button class="btn btn-sm btn-header" onclick="closeDetail()">Close</button>
+      </div>
+      <div class="card-body">
+        <div id="detailContent" class="skill-detail-content"></div>
+      </div>
+    </div>
+
+    <!-- Audit Info -->
+    <div class="audit-info">
+      <p>To run the audit, use the terminal:</p>
+      <code>cd skills-audit-app && python audit.py</code>
+      <p>Or ask Claude Code: <em>"run the skills audit"</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- New Skill Modal -->
+<div class="modal-overlay" id="newSkillModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New Skill</span>
+      <button class="modal-close" onclick="closeNewSkillModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Skill Name (kebab-case)</label>
+        <input type="text" id="newSkillName" placeholder="send-reminder" />
+      </div>
+      <div class="field">
+        <label>Description (1-2 sentences)</label>
+        <textarea id="newSkillDesc" rows="3" placeholder="What does this skill do?"></textarea>
+      </div>
+      <div class="field">
+        <label>Trigger</label>
+        <input type="text" id="newSkillTrigger" placeholder="TRIGGER when: ..." />
+      </div>
+      <div class="field">
+        <label>Steps (one per line)</label>
+        <textarea id="newSkillSteps" rows="4" placeholder="1. Do this&#10;2. Then this"></textarea>
+      </div>
+      <div class="field">
+        <label>References (one per line)</label>
+        <textarea id="newSkillRefs" rows="2" placeholder="template.md&#10;https://..."></textarea>
+      </div>
+      <div class="field">
+        <label>Notes (optional)</label>
+        <textarea id="newSkillNotes" rows="2" placeholder="Edge cases, related skills..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="createSkill()">Create Skill</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Project Modal -->
+<div class="modal-overlay" id="newProjectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New Project</span>
+      <button class="modal-close" onclick="closeNewProjectModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Project Name (kebab-case)</label>
+        <input type="text" id="newProjectName" placeholder="within-tcm" />
+      </div>
+      <button class="btn btn-primary" onclick="createProject()">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
