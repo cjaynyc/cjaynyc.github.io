@@ -3,7 +3,7 @@ let config = JSON.parse(localStorage.getItem('skillsAuditConfig') || 'null') || 
   owner: '',
   repo: '',
   branch: 'main',
-  skillsPath: 'skills-audit-app/skills'
+  skillsPath: 'skills-audit-app/claude-skills'
 };
 
 let currentScope = 'global';
@@ -53,7 +53,7 @@ function connectRepo() {
   config.owner = document.getElementById('repoOwner').value.trim();
   config.repo = document.getElementById('repoName').value.trim();
   config.branch = document.getElementById('repoBranch').value.trim() || 'main';
-  config.skillsPath = document.getElementById('skillsPath').value.trim() || 'skills-audit-app/skills';
+  config.skillsPath = document.getElementById('skillsPath').value.trim() || 'skills-audit-app/claude-skills';
 
   if (!config.owner || !config.repo) {
     alert('Please enter repository owner and name.');
@@ -325,7 +325,7 @@ function switchView(el) {
 
 // ── Dashboard ──
 async function loadDashboard() {
-  const reportsPath = config.skillsPath.replace(/\/skills$/, '') + '/audit-reports';
+  const reportsPath = config.skillsPath.replace(/\/claude-skills$/, '') + '/audit-reports';
 
   try {
     const items = await ghFetch(reportsPath);

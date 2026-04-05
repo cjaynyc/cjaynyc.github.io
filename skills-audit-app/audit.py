@@ -24,7 +24,7 @@ from collections import Counter
 from pathlib import Path
 
 # ── Constants ──
-SKILLS_ROOT = Path(__file__).parent / "skills"
+SKILLS_ROOT = Path(__file__).parent / "claude-skills"
 REPORTS_DIR = Path(__file__).parent / "audit-reports"
 SIMILARITY_THRESHOLD = 0.65
 MIN_DESCRIPTION_WORDS = 5

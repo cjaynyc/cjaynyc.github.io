@@ -253,7 +253,7 @@
     owner: 'cjaynyc',
     repo: 'cjaynyc.github.io',
     branch: 'main',
-    skillsPath: 'skills-audit-app/skills'
+    skillsPath: 'skills-audit-app/claude-skills'
   };
 
   const ghAPI = 'https://api.github.com';
@@ -272,7 +272,7 @@
   }
 
   async function loadReport() {
-    const reportsPath = config.skillsPath.replace(/\/skills$/, '') + '/audit-reports';
+    const reportsPath = config.skillsPath.replace(/\/claude-skills$/, '') + '/audit-reports';
     const container = document.getElementById('content');
 
     try {
