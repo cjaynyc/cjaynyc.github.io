@@ -1,0 +1,4 @@
+don-skill/examples/*.html
+don-skill/examples/*_files/
+.quarto/
+_freeze/

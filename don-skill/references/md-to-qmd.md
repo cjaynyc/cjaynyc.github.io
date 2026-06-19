@@ -93,6 +93,46 @@ execute:
 5. **A mermaid/diagram may only encode steps the source already states** — it
    visualizes, it does not assert new facts.
 
+## Multi-agent review convention
+
+When other agents (`$steve`, `$frank`, `$dieter`, `$cjay`) comment on a rendered
+`.qmd`, comments must be **attributable, non-destructive, and scannable.** Three
+rules and two mechanisms.
+
+**Rules**
+1. **Comments annotate; they never edit the body.** The requirements (Frank) and
+   the voice/narrative ($don) stay owned by whoever wrote them.
+2. **Every comment is signed** with the agent handle and section-anchored (the
+   doc uses `number-sections`, so every heading has a stable anchor to cite).
+3. **Flag, don't fill.** A comment can mark a missing number or a soft open; it
+   may not invent the fix inline.
+
+**Mechanism A — margin note (default, non-intrusive):**
+```markdown
+[**$steve:** the open is soft — lead with the gap, not the status note.]{.aside}
+```
+
+**Mechanism B — review callout (when a visible block is warranted):**
+```markdown
+::: {.callout-warning collapse="true"}
+## 💬 $steve · critique
+Reason here. One point per callout.
+:::
+```
+
+**One callout colour per agent** so the reader can scan authorship:
+
+| Agent | Lane | Callout type |
+|---|---|---|
+| `$steve` | critique / story risk | `callout-warning` |
+| `$frank` | requirements | `callout-note` |
+| `$dieter` | research / evidence | `callout-tip` |
+| `$cjay` | UI / visual direction | `callout-caution` |
+
+Use `collapse="true"` on review callouts so the body reads clean and comments
+expand on demand. For a running thread, append to a reserved `# Review log`
+section at the end rather than scattering blocks through the body.
+
 ## Done-check
 
 - [ ] One-sentence argument is stated up top.

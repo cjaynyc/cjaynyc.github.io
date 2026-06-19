@@ -33,6 +33,7 @@ Slack, Outlook, and legacy-app evidence.
 :::
 
 Everything below serves that one question.
+[**$steve:** strongest open in the doc — the single question earns its place. Keep it.]{.aside}
 
 Today the product is called **Bulk Search**. That name describes a mechanism:
 you search many things at once. But searching was never the job. The job is
@@ -57,6 +58,14 @@ A way to turn a list into trusted intro decisions.
 
 It's not a search tool. It's a connectivity tool. That single reframe is the
 spine of the redesign.
+
+::: {.callout-warning collapse="true"}
+## 💬 $steve · critique
+The before/after columns land. But the reframe rides on a naming decision that
+isn't approved yet — don't let the deck *imply* it's settled. The gap callout at
+the bottom covers us; consider a one-word "(proposed)" next to the new name here
+so a skimmer doesn't miss it.
+:::
 
 ## Keep what already works
 
@@ -128,7 +137,7 @@ And then: which output can be shared or exported for a deal discussion?
 
 # Product goals
 
-::: {.panel-tabset}
+:::: {.panel-tabset}
 
 ## 1 · Reframe around connectivity
 
@@ -162,6 +171,13 @@ Show the user:
 - duplicate rows;
 - failed rows;
 - save or continue options.
+
+::: {.callout-note collapse="true"}
+## 💬 $frank · requirements
+"row limits" needs a concrete number to be testable. Flagging, not filling —
+the limit should come from the ingestion spec, not the narrative.
+:::
+[**$cjay:** these nine states need a single status component, not nine ad-hoc UI treatments.]{.aside}
 
 ## 3 · Make matching first-class
 
@@ -211,7 +227,14 @@ prioritize the scan, not the metadata:
 
 Long evidence and source metadata belong **outside the main scan path.**
 
+::: {.callout-tip collapse="true"}
+## 💬 $dieter · research
+"evidence freshness" and "strength" are the columns users will trust or distrust
+the product on. We have no study yet on how users read those signals — flagging
+as an open research question before we commit the default sort to "strength."
 :::
+
+::::
 
 # What we haven't settled yet
 
