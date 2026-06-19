@@ -1,4 +1,4 @@
-don-skill/examples/*.html
-don-skill/examples/*_files/
+examples/*.html
+examples/*_files/
 .quarto/
 _freeze/
