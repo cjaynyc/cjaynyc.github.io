@@ -1,0 +1,227 @@
+---
+title: "APN+ Bulk Connectivity"
+subtitle: "Give us a messy list. Get back warm-intro decisions you can explain."
+date: "2026-06-19"
+author: "Frank · narrative direction by $don"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    title-block-banner: true
+    smooth-scroll: true
+    embed-resources: true
+callout-appearance: simple
+execute:
+  echo: false
+---
+
+::: {.callout-note appearance="default"}
+## Report status
+A derived planning report. It summarizes the current APN+ Bulk Search / Bulk
+Connectivity corpus and does **not** replace the underlying Jira, Confluence,
+Slack, Outlook, and legacy-app evidence.
+:::
+
+# The decision {.unnumbered}
+
+::: {.callout-tip appearance="default"}
+## The one question this product answers
+> **Given this list of companies or people — who can Advent credibly reach,
+> through whom, and with what evidence?**
+:::
+
+Everything below serves that one question.
+
+Today the product is called **Bulk Search**. That name describes a mechanism:
+you search many things at once. But searching was never the job. The job is
+taking a messy list of companies or people, resolving it against Advent data,
+generating APN connectivity, and helping someone choose a warm-intro path they
+can *explain* in a room.
+
+So we change the conversation.
+
+::: {.columns}
+::: {.column width="48%"}
+### What it's called today
+**Bulk Search** — a mechanism.
+A way to look up many items.
+:::
+::: {.column width="48%"}
+### What it actually is
+**Bulk Connectivity** — an outcome.
+A way to turn a list into trusted intro decisions.
+:::
+:::
+
+It's not a search tool. It's a connectivity tool. That single reframe is the
+spine of the redesign.
+
+## Keep what already works
+
+The legacy concepts are good. The redesign changes how they're *organized and
+explained*, not whether they exist:
+
+- company lists;
+- people lists;
+- Advent Connectivity generation;
+- generated-list lineage;
+- sharing and read-only states;
+- subscriptions;
+- downloads and exports;
+- Company Screening;
+- APN profile actions.
+
+# The product, in one frame
+
+| Dimension | Working answer |
+| --- | --- |
+| Product | APN+ Bulk Connectivity |
+| Legacy label | Bulk Search |
+| Primary user | Advent deal teams, APN-heavy users, operating partners, and data-quality/support users |
+| Business goal | Turn Advent's relationship network into faster, more trusted list-based workflows |
+| Primary workflow | Paste/upload list → resolve matches → save source list → generate connectivity → review output → inspect evidence → act |
+| Current problem | Useful legacy behavior is buried in a busy list manager and wide result grids |
+| Product promise | Give APN+ a messy list and get back trusted, traceable warm-intro decisions |
+
+The whole workflow, at one glance:
+
+```{mermaid}
+flowchart LR
+  A[Paste / upload list] --> B[Resolve matches]
+  B --> C[Save source list]
+  C --> D[Generate connectivity]
+  D --> E[Review output]
+  E --> F[Inspect evidence]
+  F --> G[Act: intro / share / export]
+```
+
+# Why this matters for Advent
+
+Advent's network is an operating advantage. But an advantage only compounds when
+people can **find it, trust it, and act on it quickly.** Right now there's a gap
+between *"I have a list"* and *"I know who can help."* This product closes it.
+
+Instead of searching one company or person at a time, a user can ask:
+
+::: {layout-ncol=2}
+::: {.callout-note appearance="minimal"}
+**Reach**
+Which target companies have the strongest Advent connectivity?
+:::
+::: {.callout-note appearance="minimal"}
+**People**
+Which people around those companies are actually reachable?
+:::
+::: {.callout-note appearance="minimal"}
+**Path**
+Which banker, advisor, portfolio exec, or Advent colleague is the best path?
+:::
+::: {.callout-note appearance="minimal"}
+**Signal**
+Which list should be monitored for future signals?
+:::
+:::
+
+And then: which output can be shared or exported for a deal discussion?
+
+# Product goals
+
+::: {.panel-tabset}
+
+## 1 · Reframe around connectivity
+
+Use **Bulk Connectivity** as the product framing *if Sumit approves.* Preserve
+`/bulk-search` and the old label for route compatibility and discoverability.
+
+Why it matters, plainly:
+
+- `Bulk Search` describes a **mechanism**.
+- `Bulk Connectivity` describes the **Advent business outcome**.
+
+::: {.column-margin}
+The reframe is a naming decision with a real dependency. It is **not yet
+approved** — see the open decisions below.
+:::
+
+## 2 · Make list creation reliable
+
+Users should paste or upload rows and understand *what happened* before the
+product saves or mutates a list. No silent mutations.
+
+Show the user:
+
+- accepted identifiers;
+- row count;
+- row limits;
+- parsed fields;
+- field mapping;
+- match status;
+- unresolved rows;
+- duplicate rows;
+- failed rows;
+- save or continue options.
+
+## 3 · Make matching first-class
+
+Matching is not a hidden backend step or an error state. It's a workflow the
+user drives. The UI must distinguish:
+
+- matched;
+- review required;
+- unmatched;
+- duplicate;
+- skipped;
+- failed.
+
+Users need to confirm, change, search, exclude, or bulk-accept matches — with
+**visible confidence criteria.**
+
+## 4 · Make connectivity generation explicit
+
+Generating connectivity is a visible product moment — progress, status,
+destination. No black box.
+
+The user should always know:
+
+- what source list is being used;
+- what output will be created;
+- what stage the job is in;
+- how many rows have been processed;
+- how many results were generated;
+- what failed;
+- where the generated list lives.
+
+## 5 · Make results decision-first
+
+The result grid helps users choose **who matters first.** Default columns
+prioritize the scan, not the metadata:
+
+- person or company;
+- related source company;
+- role or title;
+- APN group;
+- connection level;
+- strength;
+- best intro path;
+- evidence freshness;
+- match status;
+- action.
+
+Long evidence and source metadata belong **outside the main scan path.**
+
+:::
+
+# What we haven't settled yet
+
+::: {.callout-important appearance="default"}
+## Open decisions — label the gap, don't paper over it
+- **Naming is not approved.** "Bulk Connectivity" depends on Sumit's sign-off.
+  Until then, treat it as a proposal, not a fact.
+- **No metrics in this report.** This is a planning spine derived from the
+  corpus; it asserts no usage, adoption, or performance numbers. Any number
+  added later must trace to Jira / Confluence / Slack / Outlook evidence.
+- **Source of truth.** This document summarizes evidence; it does not replace
+  it. Decisions should be checked against the underlying record.
+:::
