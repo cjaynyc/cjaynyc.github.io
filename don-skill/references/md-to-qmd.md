@@ -133,6 +133,39 @@ Use `collapse="true"` on review callouts so the body reads clean and comments
 expand on demand. For a running thread, append to a reserved `# Review log`
 section at the end rather than scattering blocks through the body.
 
+## Deterministic structure — `scripts/qmd_tool.py`
+
+The model writes voice; a script guarantees valid `.qmd` structure. (Evidence:
+Anthropic skill guidance — "match degrees of freedom to fragility; use exact
+scripts for consistency-critical tasks.") Run it as part of the workflow:
+
+```
+python3 scripts/qmd_tool.py new --title "..." --author "..."   # valid scaffold to fill
+python3 scripts/qmd_tool.py lint file.qmd                       # check before render
+python3 scripts/qmd_tool.py fix  file.qmd -w                    # auto-correct fence widths
+```
+
+- `lint` — reports unbalanced fences (hard error), fence-width nesting issues,
+  and the tabset gotcha below. Exit 1 on any issue.
+- `fix` — normalizes fenced-div colon widths so an outer div always has more
+  colons than the divs nested inside it (Quarto best practice).
+- `new` — prints the recommended front matter + a candor-first skeleton with the
+  voice reminders inline.
+
+## Known Quarto gotcha (verified)
+
+**Do not nest a fenced div (`callout`, `column-margin`, `columns`) inside a
+`.panel-tabset` tab.** Quarto's tab filter trips on the literal `:::` and emits
+a warning (content still renders, but it's noisy). For comments or notes *inside*
+a tab, use a **margin aside**, which is a span, not a div:
+
+```markdown
+[**💬 $frank · requirements:** the row limit needs a concrete number.]{.aside}
+```
+
+Callouts are fine anywhere *outside* a tabset. `qmd_tool.py lint` flags this case
+automatically.
+
 ## Done-check
 
 - [ ] One-sentence argument is stated up top.
