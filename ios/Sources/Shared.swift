@@ -51,6 +51,10 @@ struct StackSnapshot: Codable {
         return dayFormatter.string(from: p)
     }
 
+    static func date(from key: String) -> Date? {
+        dayFormatter.date(from: key)
+    }
+
     // MARK: Derived
 
     var completedToday: Int {

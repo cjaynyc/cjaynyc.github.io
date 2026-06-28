@@ -41,10 +41,53 @@ struct LongevityWidgetEntryView: View {
     }
 
     var body: some View {
-        Group {
-            if family == .systemMedium { mediumBody } else { smallBody }
+        switch family {
+        case .accessoryCircular:    circularBody.widgetAccessoryBackground()
+        case .accessoryRectangular: rectangularBody.widgetAccessoryBackground()
+        case .accessoryInline:      inlineBody
+        case .systemMedium:         mediumBody.widgetContainerBackground()
+        default:                    smallBody.widgetContainerBackground()
         }
-        .widgetContainerBackground()
+    }
+
+    // MARK: Lock Screen / accessory families
+
+    private var circularBody: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            if s.fastStart != nil {
+                Gauge(value: min(1, s.fastFraction)) {
+                    Image(systemName: "timer")
+                }
+                .gaugeStyle(.accessoryCircularCapacity)
+            } else {
+                VStack(spacing: -1) {
+                    Text("\(s.completedToday)").font(.system(size: 17, weight: .bold))
+                    Text("/ \(StackSnapshot.pillarIDs.count)").font(.system(size: 9))
+                }
+            }
+        }
+    }
+
+    private var rectangularBody: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            if let range = fastRange {
+                HStack(spacing: 4) {
+                    Image(systemName: "timer")
+                    Text(timerInterval: range, countsDown: false)
+                        .font(.system(.body, design: .monospaced))
+                }
+            } else {
+                Label("Not fasting", systemImage: "moon.zzz")
+            }
+            Text("\(s.completedToday)/\(StackSnapshot.pillarIDs.count) pillars · 🔥\(s.streak)")
+                .font(.caption)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var inlineBody: some View {
+        Text("🔥\(s.streak) · \(s.completedToday)/\(StackSnapshot.pillarIDs.count) pillars")
     }
 
     private var smallBody: some View {
@@ -120,6 +163,16 @@ private extension View {
             self.padding(14).background(Color.bg)
         }
     }
+
+    /// Lock Screen widgets render on a transparent, system-tinted background.
+    @ViewBuilder
+    func widgetAccessoryBackground() -> some View {
+        if #available(iOS 17.0, *) {
+            self.containerBackground(for: .widget) { Color.clear }
+        } else {
+            self
+        }
+    }
 }
 
 // MARK: - Configuration
@@ -131,7 +184,10 @@ struct LongevityWidget: Widget {
         }
         .configurationDisplayName("Longevity Stack")
         .description("Your fasting progress and pillar count at a glance.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([
+            .systemSmall, .systemMedium,
+            .accessoryCircular, .accessoryRectangular, .accessoryInline,
+        ])
     }
 }
 

@@ -58,6 +58,28 @@ final class AppState: ObservableObject {
         Array(fastHistory.suffix(7).reversed())
     }
 
+    /// Per-day pillar completion and fasting hours for the last 30 days (oldest first).
+    func last30Days() -> [DayStat] {
+        var fastingByDay: [String: Double] = [:]
+        for fast in fastHistory {
+            let key = StackSnapshot.dayKey(fast.end)
+            fastingByDay[key, default: 0] += fast.hours
+        }
+
+        var stats: [DayStat] = []
+        var key = StackSnapshot.dayKey()
+        for _ in 0..<30 {
+            let rec = pillarsByDay[key] ?? [:]
+            let complete = Pillars.all.filter { rec[$0.id] == true }.count
+            let date = StackSnapshot.date(from: key) ?? Date()
+            stats.append(DayStat(id: key, date: date,
+                                 pillarsComplete: complete,
+                                 fastingHours: fastingByDay[key] ?? 0))
+            key = StackSnapshot.prevDayKey(key)
+        }
+        return stats.reversed()
+    }
+
     // MARK: Pillars (with automatic midnight reset + history pruning)
 
     @discardableResult

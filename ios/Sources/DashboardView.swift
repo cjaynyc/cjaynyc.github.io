@@ -15,6 +15,7 @@ struct DashboardView: View {
                 FastingCard(now: now)
                 PillarsCard(health: health)
                 StreakRow(health: health)
+                HistoryCard()
                 FastingHistoryCard()
                 RemindersCard(notifications: notifications)
                 healthFooter

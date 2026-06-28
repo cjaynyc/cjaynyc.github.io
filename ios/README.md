@@ -18,7 +18,9 @@ thing a web app can't do: **Apple Health integration**.
 |---|---|
 | **Daily reminder** | A single repeating local notification at a time you pick. No server/push cert — pure `UserNotifications`. |
 | **Fasting log** | Every completed fast (≥1 min) is recorded and shown in a "Fasting Log" card, color-coded against your goal. Stored locally — see the note below. |
+| **30-day charts** | Swift Charts card showing pillar completion and fasting hours per day for the last 30 days, with your fasting goal drawn as a reference line. |
 | **Home-screen widget** | Small + medium WidgetKit widget showing live fast progress, pillar count, and streak. |
+| **Lock Screen widgets** | Circular (fast gauge), rectangular (timer + pillars + streak), and inline accessory widgets for the iOS Lock Screen. |
 | **Adjustable step goal** | Tune the Motion auto-complete threshold (1k–20k) right in the app. |
 
 Everything else (fasting ring, pillar checklist, streak, best-fast) mirrors the
@@ -94,11 +96,12 @@ ios/
 │   ├── AppState.swift          # fasting + pillars + streak + step goal, persisted
 │   ├── HealthManager.swift     # HealthKit auth, reads, mindful-minute writes
 │   ├── NotificationManager.swift # daily local reminder
+│   ├── HistoryView.swift       # 30-day Swift Charts card
 │   ├── Shared.swift            # App Group store + snapshot (shared with widget)
 │   ├── Theme.swift             # colors + Card container (shared with widget)
 │   └── DashboardView.swift     # the UI
 └── Widget/                     # widget extension target
-    └── LongevityWidget.swift   # WidgetKit small/medium widget
+    └── LongevityWidget.swift   # Home Screen + Lock Screen widgets
 ```
 
 ## Notes & next steps
