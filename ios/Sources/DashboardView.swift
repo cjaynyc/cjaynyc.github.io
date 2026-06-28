@@ -3,6 +3,7 @@ import SwiftUI
 struct DashboardView: View {
     @EnvironmentObject var state: AppState
     @StateObject private var health = HealthManager()
+    @StateObject private var notifications = NotificationManager()
     @State private var now = Date()
 
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -14,6 +15,8 @@ struct DashboardView: View {
                 FastingCard(now: now)
                 PillarsCard(health: health)
                 StreakRow(health: health)
+                FastingHistoryCard()
+                RemindersCard(notifications: notifications)
                 healthFooter
             }
             .padding(16)
@@ -21,10 +24,12 @@ struct DashboardView: View {
         .background(Color.bg.ignoresSafeArea())
         .onReceive(ticker) { now = $0 }
         .task {
+            await notifications.refreshAuthStatus()
             await health.requestAuthorization()
             syncMotion()
         }
         .onChange(of: health.todaySteps) { _ in syncMotion() }
+        .onChange(of: state.motionStepGoal) { _ in syncMotion() }
         .onChange(of: scenePhaseRefreshKey) { _ in
             Task { await health.refresh(); syncMotion() }
         }
@@ -35,7 +40,7 @@ struct DashboardView: View {
     private var scenePhaseRefreshKey: Int { scenePhase == .active ? 1 : 0 }
 
     private func syncMotion() {
-        if health.authorized, health.todaySteps >= health.motionStepGoal {
+        if health.authorized, health.todaySteps >= state.motionStepGoal {
             state.setDone("motion", true)
         }
     }
@@ -68,14 +73,107 @@ struct DashboardView: View {
             } else {
                 Text("\(health.todaySteps) steps · \(health.todayEnergy) kcal active today")
                     .foregroundColor(.muted)
-                Text("Motion auto-completes at \(health.motionStepGoal) steps")
-                    .foregroundColor(.faint)
+                HStack(spacing: 6) {
+                    Text("Motion auto-completes at").foregroundColor(.faint)
+                    Button { state.adjustStepGoal(-1000) } label: {
+                        Image(systemName: "minus.circle").foregroundColor(.accent)
+                    }.buttonStyle(.plain)
+                    Text("\(state.motionStepGoal)")
+                        .foregroundColor(.muted).monospacedDigit()
+                    Button { state.adjustStepGoal(1000) } label: {
+                        Image(systemName: "plus.circle").foregroundColor(.accent)
+                    }.buttonStyle(.plain)
+                    Text("steps").foregroundColor(.faint)
+                }
             }
         }
         .font(.system(size: 11))
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
         .padding(.top, 4)
+    }
+}
+
+// MARK: - Fasting history
+
+struct FastingHistoryCard: View {
+    @EnvironmentObject var state: AppState
+
+    var body: some View {
+        Card {
+            Text("Fasting Log").cardTitle()
+
+            if state.recentFasts.isEmpty {
+                Text("Completed fasts will appear here.")
+                    .font(.system(size: 13))
+                    .foregroundColor(.faint)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 4)
+            } else {
+                ForEach(state.recentFasts) { fast in
+                    HStack {
+                        Text(fast.start.formatted(.dateTime.month().day().hour().minute()))
+                            .font(.system(size: 13))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text(Self.durationText(fast.hours))
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(fast.hours >= Double(state.goalHours) ? .green : .muted)
+                            .monospacedDigit()
+                    }
+                    .padding(.vertical, 6)
+                }
+            }
+        }
+    }
+
+    private static func durationText(_ hours: Double) -> String {
+        let h = Int(hours)
+        let m = Int((hours - Double(h)) * 60)
+        return "\(h)h \(String(format: "%02d", m))m"
+    }
+}
+
+// MARK: - Reminders
+
+struct RemindersCard: View {
+    @ObservedObject var notifications: NotificationManager
+
+    @State private var time = Date()
+
+    var body: some View {
+        Card {
+            Toggle(isOn: Binding(
+                get: { notifications.enabled },
+                set: { on in Task { await notifications.setEnabled(on) } }
+            )) {
+                Text("Daily Reminder").cardTitle()
+            }
+            .tint(.accent)
+
+            if notifications.enabled {
+                DatePicker("Remind me at",
+                           selection: $time,
+                           displayedComponents: .hourAndMinute)
+                    .foregroundColor(.muted)
+                    .font(.system(size: 13))
+                    .onChange(of: time) { newValue in
+                        let c = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                        notifications.updateTime(hour: c.hour ?? 9, minute: c.minute ?? 0)
+                    }
+            }
+
+            if notifications.denied {
+                Text("Notifications are turned off in iOS Settings. Enable them for Longevity Stack to get reminders.")
+                    .font(.system(size: 11))
+                    .foregroundColor(.faint)
+            }
+        }
+        .onAppear {
+            time = Calendar.current.date(
+                bySettingHour: notifications.hour, minute: notifications.minute, second: 0, of: Date()
+            ) ?? Date()
+        }
     }
 }
 

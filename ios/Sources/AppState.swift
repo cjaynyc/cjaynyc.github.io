@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import WidgetKit
 
 // MARK: - Pillars
 
@@ -20,70 +21,48 @@ enum Pillars {
     ]
 }
 
-// MARK: - App state (persisted to UserDefaults)
+// MARK: - App state (persisted to the shared App Group store)
 
 @MainActor
 final class AppState: ObservableObject {
     @Published var fastStart: Date?
     @Published var goalHours: Int = 14
     @Published var bestFastHours: Int = 0
+    @Published var motionStepGoal: Int = 6000
     @Published private(set) var pillarsByDay: [String: [String: Bool]] = [:]
+    @Published private(set) var fastHistory: [FastRecord] = []
 
-    private let storeKey = "longevityStack.v1"
-
-    private struct Snapshot: Codable {
-        var fastStart: Date?
-        var goalHours: Int
-        var bestFastHours: Int
-        var pillarsByDay: [String: [String: Bool]]
-    }
-
-    init() { load() }
-
-    // MARK: Persistence
-
-    private func load() {
-        guard let data = UserDefaults.standard.data(forKey: storeKey),
-              let snap = try? JSONDecoder().decode(Snapshot.self, from: data) else { return }
+    init() {
+        let snap = loadSnapshot()
         fastStart = snap.fastStart
         goalHours = snap.goalHours
         bestFastHours = snap.bestFastHours
+        motionStepGoal = snap.motionStepGoal
         pillarsByDay = snap.pillarsByDay
+        fastHistory = snap.fastHistory
     }
 
     private func save() {
-        let snap = Snapshot(fastStart: fastStart, goalHours: goalHours,
-                            bestFastHours: bestFastHours, pillarsByDay: pillarsByDay)
-        if let data = try? JSONEncoder().encode(snap) {
-            UserDefaults.standard.set(data, forKey: storeKey)
-        }
+        let snap = StackSnapshot(fastStart: fastStart,
+                                 goalHours: goalHours,
+                                 bestFastHours: bestFastHours,
+                                 motionStepGoal: motionStepGoal,
+                                 pillarsByDay: pillarsByDay,
+                                 fastHistory: fastHistory)
+        saveSnapshot(snap)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
-    // MARK: Day keys
-
-    private static let dayFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.calendar = Calendar.current
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.dateFormat = "yyyy-MM-dd"
-        return f
-    }()
-
-    static func dayKey(_ date: Date = Date()) -> String {
-        dayFormatter.string(from: date)
-    }
-
-    static func prevDayKey(_ key: String) -> String {
-        guard let d = dayFormatter.date(from: key),
-              let p = Calendar.current.date(byAdding: .day, value: -1, to: d) else { return key }
-        return dayFormatter.string(from: p)
+    /// Most recent completed fasts, newest first.
+    var recentFasts: [FastRecord] {
+        Array(fastHistory.suffix(7).reversed())
     }
 
     // MARK: Pillars (with automatic midnight reset + history pruning)
 
     @discardableResult
     private func ensureToday() -> [String: Bool] {
-        let key = AppState.dayKey()
+        let key = StackSnapshot.dayKey()
         if pillarsByDay[key] == nil {
             pillarsByDay[key] = [:]
             pruneHistory()
@@ -93,13 +72,13 @@ final class AppState: ObservableObject {
     }
 
     func isDone(_ pillarID: String) -> Bool {
-        pillarsByDay[AppState.dayKey()]?[pillarID] ?? false
+        pillarsByDay[StackSnapshot.dayKey()]?[pillarID] ?? false
     }
 
     func toggle(_ pillarID: String) {
         var rec = ensureToday()
         rec[pillarID] = !(rec[pillarID] ?? false)
-        pillarsByDay[AppState.dayKey()] = rec
+        pillarsByDay[StackSnapshot.dayKey()] = rec
         save()
     }
 
@@ -108,12 +87,12 @@ final class AppState: ObservableObject {
         var rec = ensureToday()
         guard rec[pillarID] != value else { return }
         rec[pillarID] = value
-        pillarsByDay[AppState.dayKey()] = rec
+        pillarsByDay[StackSnapshot.dayKey()] = rec
         save()
     }
 
     var completedToday: Int {
-        let rec = pillarsByDay[AppState.dayKey()] ?? [:]
+        let rec = pillarsByDay[StackSnapshot.dayKey()] ?? [:]
         return Pillars.all.filter { rec[$0.id] == true }.count
     }
 
@@ -125,21 +104,21 @@ final class AppState: ObservableObject {
     /// Consecutive fully-complete days ending today (or yesterday if today isn't done yet).
     var streak: Int {
         var count = 0
-        var key = AppState.dayKey()
-        if !isComplete(day: key) { key = AppState.prevDayKey(key) }
+        var key = StackSnapshot.dayKey()
+        if !isComplete(day: key) { key = StackSnapshot.prevDayKey(key) }
         while isComplete(day: key) {
             count += 1
-            key = AppState.prevDayKey(key)
+            key = StackSnapshot.prevDayKey(key)
         }
         return count
     }
 
     private func pruneHistory() {
         var keep: [String: [String: Bool]] = [:]
-        var key = AppState.dayKey()
+        var key = StackSnapshot.dayKey()
         for _ in 0..<30 {
             if let rec = pillarsByDay[key] { keep[key] = rec }
-            key = AppState.prevDayKey(key)
+            key = StackSnapshot.prevDayKey(key)
         }
         pillarsByDay = keep
     }
@@ -148,8 +127,14 @@ final class AppState: ObservableObject {
 
     func toggleFast() {
         if let start = fastStart {
-            let hrs = Int(Date().timeIntervalSince(start) / 3600)
+            let end = Date()
+            let hrs = Int(end.timeIntervalSince(start) / 3600)
             if hrs > bestFastHours { bestFastHours = hrs }
+            // Record any fast of at least one minute.
+            if end.timeIntervalSince(start) >= 60 {
+                fastHistory.append(FastRecord(start: start, end: end))
+                fastHistory = Array(fastHistory.suffix(60))   // keep storage bounded
+            }
             fastStart = nil
         } else {
             fastStart = Date()
@@ -159,6 +144,11 @@ final class AppState: ObservableObject {
 
     func adjustGoal(_ delta: Int) {
         goalHours = min(36, max(8, goalHours + delta))
+        save()
+    }
+
+    func adjustStepGoal(_ delta: Int) {
+        motionStepGoal = min(20000, max(1000, motionStepGoal + delta))
         save()
     }
 }

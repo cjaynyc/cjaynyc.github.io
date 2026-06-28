@@ -10,9 +10,6 @@ final class HealthManager: ObservableObject {
     @Published private(set) var todaySteps = 0
     @Published private(set) var todayEnergy = 0
 
-    /// Step count at which the "Motion" pillar auto-completes.
-    let motionStepGoal = 6000
-
     private let store = HKHealthStore()
 
     private var readTypes: Set<HKObjectType> {
