@@ -1,5 +1,5 @@
 // Longevity Stack — offline-first service worker
-const CACHE = "longevity-v1";
+const CACHE = "longevity-v2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -26,24 +26,36 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Cache-first for app shell; network fallback keeps it usable offline.
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
+  // Network-first for navigations (the HTML document) so deployed updates show
+  // up immediately, with a cached fallback that keeps the app usable offline.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((cache) => cache.put("./index.html", copy));
+          return res;
+        })
+        .catch(() => caches.match("./index.html").then((c) => c || caches.match("./")))
+    );
+    return;
+  }
+
+  // Cache-first for static assets (icons, manifest) with runtime caching.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
-      return fetch(request)
-        .then((res) => {
-          // Runtime-cache same-origin successful responses.
-          if (res.ok && new URL(request.url).origin === self.location.origin) {
-            const copy = res.clone();
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
-          }
-          return res;
-        })
-        .catch(() => caches.match("./index.html"));
+      return fetch(request).then((res) => {
+        if (res.ok && new URL(request.url).origin === self.location.origin) {
+          const copy = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy));
+        }
+        return res;
+      });
     })
   );
 });
