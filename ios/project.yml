@@ -1,0 +1,68 @@
+name: LongevityStack
+options:
+  bundleIdPrefix: com.cjaynyc
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ""   # set your Apple Developer Team ID, or sign in Xcode
+
+targets:
+  LongevityStack:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    dependencies:
+      - target: LongevityWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cjaynyc.longevitystack
+    info:
+      path: Sources/Info.plist
+      properties:
+        CFBundleDisplayName: Longevity
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSHealthShareUsageDescription: >-
+          Longevity Stack reads your step count and active energy to
+          auto-complete your daily Motion pillar and show your activity.
+        NSHealthUpdateUsageDescription: >-
+          Longevity Stack logs your Kumbhaka breathwork as Mindful Minutes
+          in Apple Health.
+    entitlements:
+      path: Sources/LongevityStack.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.security.application-groups:
+          - group.com.cjaynyc.longevitystack
+
+  LongevityWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widget
+      - path: Sources/Shared.swift
+      - path: Sources/Theme.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cjaynyc.longevitystack.widget
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: Longevity
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widget/LongevityWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.cjaynyc.longevitystack
