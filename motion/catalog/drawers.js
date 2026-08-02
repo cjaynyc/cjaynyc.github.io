@@ -142,7 +142,7 @@ export function Sheet({ detents = [0, 0.5, 0.9], onDismiss, children }: SheetPro
     mount(stage) {
       stage.innerHTML = `
         <div class="d-row" style="gap:22px">
-          <div class="d-frame">
+          <div class="d-frame d-draggable">
             <div class="d-frame-bar">Library</div>
             <div class="d-frame-body">
               <div class="d-skel-line" style="width:78%"></div>
@@ -152,7 +152,7 @@ export function Sheet({ detents = [0, 0.5, 0.9], onDismiss, children }: SheetPro
             </div>
             <div class="d-scrim" data-scrim style="opacity:0"></div>
             <div class="d-sheet">
-              <div class="d-sheet-handle" aria-label="Drag to resize"></div>
+              <div class="d-sheet-handle d-draggable" aria-label="Drag to resize"></div>
               <div class="d-sheet-body">
                 <div class="d-sheet-title">Now playing</div>
                 <div class="d-skel-line" style="width:88%"></div>
@@ -352,7 +352,7 @@ export function Drawer({ open, onOpenChange, children, page }: DrawerProps) {
     mount(stage) {
       stage.innerHTML = `
         <div class="d-row" style="gap:22px">
-          <div class="d-frame">
+          <div class="d-frame d-draggable">
             <div class="d-drawer-page">
               <div class="d-frame-bar">Dashboard</div>
               <div class="d-frame-body">
@@ -394,7 +394,14 @@ export function Drawer({ open, onOpenChange, children, page }: DrawerProps) {
 
       const WIDTH = 190;
       const PAGE_RATIO = 0.55;
-      const EDGE_ZONE = 26;
+
+      // iOS Safari owns a left-edge swipe for back-navigation, so an edge-zone
+      // gesture there is unwinnable — the browser takes it before the page sees
+      // it. On coarse pointers accept the drag anywhere on the frame; the demo
+      // has no competing horizontal scroll, so nothing is lost.
+      const coarse =
+        typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+      const EDGE_ZONE = coarse ? Number.POSITIVE_INFINITY : 26;
 
       // One scalar; everything below is derived from it.
       const value = createSpringValue(0, {
@@ -575,7 +582,7 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
     mount(stage) {
       stage.innerHTML = `
         <div class="d-row" style="gap:22px">
-          <div class="d-frame">
+          <div class="d-frame d-draggable">
             <div class="d-frame-bar">Inbox</div>
             <div class="d-pr-spinner"></div>
             <div class="d-pr-scroll">

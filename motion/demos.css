@@ -5,6 +5,25 @@
    is scoped to its card instead of taking over the page.
    ───────────────────────────────────────────────────────────── */
 
+/* ── Touch targets ─────────────────────────────────────────────
+   touch-action is NOT inherited. Setting it on a container does not
+   cover a descendant that is the actual drag target — Safari resolves
+   it strictly and fires pointercancel the instant it decides a touch is
+   a scroll, which aborts the gesture. Every element handed to
+   createDragGesture carries this class.
+
+   The webkit properties suppress the long-press selection callout,
+   which otherwise hijacks a slow drag on iOS.
+   ──────────────────────────────────────────────────────────── */
+
+.d-draggable {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: contain;
+}
+
 /* ── Shared kit ────────────────────────────────────────────── */
 
 .d-stack {

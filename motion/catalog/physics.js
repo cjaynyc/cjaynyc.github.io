@@ -500,7 +500,7 @@ export function projectMomentum(velocity: number, decelerationRate = 0.99) {
         <div class="d-stack" style="width:100%">
           <div class="d-flick-track">
             <div class="d-flick-ghost"></div>
-            <div class="d-flick-puck">DRAG</div>
+            <div class="d-flick-puck d-draggable">DRAG</div>
           </div>
           <div class="d-readout">
             velocity <b data-v>0</b> px/s · projected <b data-p>0</b>px · detent <b data-d>0</b>
@@ -672,7 +672,7 @@ function onDragEnd() {
           <div class="d-rb-track">
             <div class="d-rb-bound" style="left:16px"></div>
             <div class="d-rb-bound" data-max></div>
-            <div class="d-rb-card"></div>
+            <div class="d-rb-card d-draggable"></div>
           </div>
           <div class="d-readout">
             raw <b data-raw>0</b>px · resisted <b data-res>0</b>px · returning <b data-ret>0.55</b>

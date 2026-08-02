@@ -12,6 +12,17 @@ import {
   stagger,
 } from '../engine.js';
 
+/**
+ * Safari still needs the -webkit- prefix for backdrop-filter, and the
+ * unprefixed property alone silently does nothing there — the scrim dims but
+ * never blurs, which quietly drops the obscuration cue on every iOS device.
+ */
+function setBlur(node, radius) {
+  const value = `blur(${radius}px)`;
+  node.style.backdropFilter = value;
+  node.style.webkitBackdropFilter = value;
+}
+
 export const category = {
   id: 'prompts',
   index: '04',
@@ -49,6 +60,10 @@ Backdrop
   content behind is unreachable, not merely dimmed.
 - Gate the blur on a capability check; backdrop-filter is expensive on low-end
   hardware and animating it can drop frames. Fall back to opacity alone.
+- Set BOTH backdropFilter and webkitBackdropFilter. Safari still requires the
+  prefix, and setting only the standard property fails silently there - the
+  scrim dims but never blurs, so every iOS user loses the obscuration cue with
+  no error to tell you.
 
 Focus management (non-negotiable)
 - On open: store document.activeElement, move focus to the dialog.
@@ -104,7 +119,13 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
         panel.current!.style.opacity = String(p);
         panel.current!.style.transform = reduced ? '' : 'scale(' + (0.94 + 0.06 * p) + ')';
         backdrop.current!.style.opacity = String(p * 0.45);
-        if (!reduced) backdrop.current!.style.backdropFilter = 'blur(' + p * 8 + 'px)';
+        // Safari needs the -webkit- prefix; unprefixed alone silently no-ops
+        // there, so the scrim dims but never blurs on every iOS device.
+        if (!reduced) {
+          const blur = 'blur(' + p * 8 + 'px)';
+          backdrop.current!.style.backdropFilter = blur;
+          backdrop.current!.style.webkitBackdropFilter = blur;
+        }
       },
     });
   }, [open]);
@@ -160,7 +181,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
             panel.style.opacity = String(p);
             if (!reduced) panel.style.transform = `scale(${0.97 + 0.03 * p})`;
             node.style.opacity = String(p);
-            if (!reduced) node.style.backdropFilter = `blur(${p * 8}px)`;
+            if (!reduced) setBlur(node, p * 8);
           },
           onComplete: () => {
             node.remove();
@@ -230,7 +251,7 @@ export function Dialog({ open, onClose, title, children }: DialogProps) {
             panel.style.opacity = String(p);
             if (!reduced) panel.style.transform = `scale(${0.94 + 0.06 * p})`;
             overlay.style.opacity = String(p);
-            if (!reduced) overlay.style.backdropFilter = `blur(${p * 8}px)`;
+            if (!reduced) setBlur(overlay, p * 8);
           },
         });
       }
@@ -365,7 +386,7 @@ function Toast({ toast, index, onDismiss }: ToastProps) {
 
       function addToast(delay = 0) {
         const node = document.createElement('div');
-        node.className = 'd-toast';
+        node.className = 'd-toast d-draggable';
         node.setAttribute('role', 'status');
         node.setAttribute('aria-live', 'polite');
         node.innerHTML = `

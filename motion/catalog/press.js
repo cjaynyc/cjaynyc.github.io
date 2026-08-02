@@ -499,12 +499,21 @@ export function Magnetic({ children, radius = 120, pull = 0.28, max = 14 }: Magn
 <li><strong>Coarse pointers skip it.</strong> No hover state on touch — the listeners would be pure cost.</li>
 </ul>`,
     mount(stage) {
+      // No hover on touch, so the effect would look dead. On coarse pointers
+      // the same maths runs off a drag instead — the falloff is the point, and
+      // it reads identically whether the cursor or a finger supplies the position.
+      const coarse =
+        typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+
       stage.innerHTML = `
         <div class="d-stack">
-          <div class="d-mag-field">
+          <div class="d-mag-field d-draggable">
             <button class="d-btn d-mag-btn" type="button">Get in touch</button>
           </div>
           <div class="d-readout">offset <b data-mag>0.0, 0.0</b> · strength <b data-str>0.00</b></div>
+          <div class="d-label">${
+            coarse ? 'drag inside the field — no hover on touch' : 'linear falloff · pull 0.28 · cap 14px'
+          }</div>
         </div>`;
 
       const field = stage.querySelector('.d-mag-field');
