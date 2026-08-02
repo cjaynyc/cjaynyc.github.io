@@ -302,8 +302,11 @@ for (const card of document.querySelectorAll('[data-entry]')) spy.observe(card);
 
 /* ── Theme ──────────────────────────────────────────────────── */
 
+// Absent when the page is embedded somewhere that owns the theme itself — the
+// CSS reads both `prefers-color-scheme` and a stamped `data-theme`, so leaving
+// the attribute alone is the correct behaviour rather than a degraded one.
 const themeButton = document.querySelector('[data-theme-toggle]');
-const themeLabel = themeButton.querySelector('[data-theme-label]');
+const themeLabel = themeButton?.querySelector('[data-theme-label]');
 
 function systemTheme() {
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -312,18 +315,23 @@ function systemTheme() {
 function applyTheme(theme) {
   if (theme === 'system') document.documentElement.removeAttribute('data-theme');
   else document.documentElement.setAttribute('data-theme', theme);
-  themeLabel.textContent = theme === 'system' ? `System (${systemTheme()})` : theme === 'dark' ? 'Dark' : 'Light';
+  if (themeLabel) {
+    themeLabel.textContent =
+      theme === 'system' ? `System (${systemTheme()})` : theme === 'dark' ? 'Dark' : 'Light';
+  }
   localStorage.setItem('motion-theme', theme);
 }
 
-const THEMES = ['system', 'light', 'dark'];
-let theme = localStorage.getItem('motion-theme') ?? 'system';
-applyTheme(THEMES.includes(theme) ? theme : 'system');
+if (themeButton) {
+  const THEMES = ['system', 'light', 'dark'];
+  let theme = localStorage.getItem('motion-theme') ?? 'system';
+  applyTheme(THEMES.includes(theme) ? theme : 'system');
 
-themeButton.addEventListener('click', () => {
-  theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
-  applyTheme(theme);
-});
+  themeButton.addEventListener('click', () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    applyTheme(theme);
+  });
+}
 
 /* ── Reduced-motion notice ──────────────────────────────────── */
 
