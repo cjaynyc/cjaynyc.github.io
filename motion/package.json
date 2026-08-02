@@ -1,0 +1,15 @@
+{
+  "name": "@cjaynyc/motion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Motion Menu — a catalogue of React UI interactions with live demos, generation prompts, and copy-paste source. The site itself is static and needs no build; this manifest exists only to typecheck react/.",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "serve": "python3 -m http.server 8899 --directory .."
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "typescript": "^5.9.0"
+  }
+}
