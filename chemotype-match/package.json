@@ -1,0 +1,16 @@
+{
+  "name": "chemotype-match",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vector math core for cannabis chemotype swipe-matching",
+  "main": "src/vectorMath.ts",
+  "types": "src/types.ts",
+  "scripts": {
+    "example": "ts-node src/example.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
