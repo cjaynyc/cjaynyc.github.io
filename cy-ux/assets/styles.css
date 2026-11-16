@@ -155,7 +155,7 @@ p { text-wrap: pretty; }
 .portrait { background: var(--surface); border-radius: var(--r-lg); min-height: 320px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--ink-soft); font-size: 14px; padding: var(--s-5); border: 2px dashed var(--line); }
 .history { grid-column: 1 / -1; background: var(--surface); border-radius: var(--r-lg); padding: var(--s-6) var(--s-7); }
 .history h3 { font-size: 24px; margin-bottom: var(--s-4); }
-.history li { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto; gap: var(--s-4); padding: var(--s-4) 0; border-top: 1px solid var(--line); font-size: 16px; }
+.history li { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) 150px; gap: var(--s-4); padding: var(--s-4) 0; border-top: 1px solid var(--line); font-size: 16px; }
 .history li strong { font-weight: 600; }
 .history li span { color: var(--ink-soft); }
 
@@ -357,3 +357,10 @@ p { text-wrap: pretty; }
 .review-bar button { font: inherit; color: #fff; background: transparent; border: 0; border-radius: 999px; padding: 0 14px; min-height: 40px; cursor: pointer; white-space: nowrap; }
 .review-bar button[aria-pressed="true"] { background: #fff; color: #111418; }
 body { padding-bottom: 72px; }
+
+.bio .actions { justify-content: flex-start; align-items: center; gap: var(--s-5); }
+.bio .text-link { color: var(--panel-ink); }
+.bio .text-link:hover { color: var(--panel-soft); }
+.card-soon .tags li { background: var(--surface); }
+.history li span:last-child { text-align: right; }
+@media (max-width: 640px) { .history li span:last-child { text-align: left; } }
