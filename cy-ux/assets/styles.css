@@ -347,6 +347,61 @@ p { text-wrap: pretty; }
 :root[data-theme="slate"] { --band-1: #D5DCE4; --band-2: #DDE1E6; --band-3: #E3E1DC; }
 :root[data-theme="graphite"] { --band-1: #26282A; --band-2: #2E2B27; --band-3: #2A2C2E; }
 
+:root[data-theme="paper"] {
+  --bg: #F7F5F0; --surface: #FFFFFF; --surface-hover: #ECE9E2;
+  --ink: #141414; --ink-soft: #55524C; --line: #CFCBC2;
+  --accent: #141414; --accent-hover: #333333; --accent-text: #7A2E1E; --on-accent: #FFFFFF;
+  --panel: #141414; --panel-hover: #333333; --panel-ink: #FFFFFF; --panel-soft: #BDB9B0;
+  --sh-1: #F7F5F0; --sh-2: #ECE8DF; --sh-3: #E6E9E4;
+  --band-1: #EDEAE2; --band-2: #E6E9E4; --band-3: #E9E4E0; --band-4: #141414; --band-4-ink: #FFFFFF;
+  --r-lg: 0px; --r-md: 0px; --r-pill: 0px; --r-btn: 0px;
+  --font-display: 'Newsreader', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --display-weight: 400; --display-tracking: -0.02em; --h1-tracking: -0.03em; --h1-leading: 1;
+}
+:root[data-theme="paper"] .card, :root[data-theme="paper"] .hero-shots figure, :root[data-theme="paper"] .history, :root[data-theme="paper"] .nav { border: 1px solid var(--line); }
+:root[data-theme="paper"] .hero-shots figure { transform: none; }
+:root[data-theme="paper"] .hero h1 { font-size: clamp(46px, 8vw, 104px); }
+:root[data-theme="paper"] .site-header { border-bottom: 1px solid var(--ink); }
+:root[data-theme="mono"] {
+  --bg: #EDEEEC; --surface: #F8F8F6; --surface-hover: #E0E2DF;
+  --ink: #16181A; --ink-soft: #565B5E; --line: #D2D5D2;
+  --accent: #2F5D50; --accent-hover: #244A40; --accent-text: #2F5D50; --on-accent: #FFFFFF;
+  --panel: #16181A; --panel-hover: #2A2D30; --panel-ink: #F2F3F1; --panel-soft: #A8AEB0;
+  --sh-1: #EDEEEC; --sh-2: #DDE5E1; --sh-3: #E2E2DC;
+  --band-1: #DDE5E1; --band-2: #E2E2DC; --band-3: #DADFE3; --band-4: #2F5D50; --band-4-ink: #FFFFFF;
+  --r-lg: 8px; --r-md: 4px; --r-pill: 6px; --r-btn: 6px;
+  --font-display: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --display-weight: 500; --display-tracking: -0.04em; --h1-tracking: -0.06em; --h1-leading: 1.08;
+}
+:root[data-theme="mono"] .hero h1 { font-size: clamp(32px, 5.2vw, 66px); max-width: 20ch; }
+:root[data-theme="mono"] .section h2, :root[data-theme="mono"] .band-head h2, :root[data-theme="mono"] .contact h2 { font-size: clamp(26px, 3.4vw, 40px); }
+:root[data-theme="mono"] .eyebrow, :root[data-theme="mono"] .pill, :root[data-theme="mono"] .tags { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+:root[data-theme="mono"] .hero-shots figure { transform: none; }
+:root[data-theme="dusk"] {
+  --bg: #17161C; --surface: #211F28; --surface-hover: #2B2934;
+  --ink: #ECEAF2; --ink-soft: #A7A3B5; --line: #34313F;
+  --accent: #B9B0E0; --accent-hover: #A79DD3; --accent-text: #B9B0E0; --on-accent: #17161C;
+  --panel: #B9B0E0; --panel-hover: #A79DD3; --panel-ink: #17161C; --panel-soft: #45405E;
+  --sh-1: #17161C; --sh-2: #25223A; --sh-3: #2E2433;
+  --band-1: #211F28; --band-2: #262330; --band-3: #2A2630; --band-4: #B9B0E0; --band-4-ink: #17161C;
+  --font-display: 'Manrope', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --display-weight: 600; --display-tracking: -0.03em; --h1-tracking: -0.045em; --h1-leading: 1.04;
+}
+:root[data-theme="clay"] {
+  --bg: #EFE9E2; --surface: #F8F4EF; --surface-hover: #E4DCD2;
+  --ink: #2A2320; --ink-soft: #6A5E57; --line: #DDD3C8;
+  --accent: #8F5440; --accent-hover: #77442F; --accent-text: #8F5440; --on-accent: #FFFFFF;
+  --panel: #2A2320; --panel-hover: #1A1513; --panel-ink: #F5EFE8; --panel-soft: #C4B8AD;
+  --sh-1: #EFE9E2; --sh-2: #E5D6C8; --sh-3: #DEDFCF;
+  --band-1: #E3D5C8; --band-2: #DCDCCB; --band-3: #E6DACF; --band-4: #8F5440; --band-4-ink: #FFFFFF;
+  --font-display: 'Figtree', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, sans-serif;
+  --display-weight: 600; --display-tracking: -0.03em; --h1-tracking: -0.04em; --h1-leading: 1.02;
+}
+
 /* Wordmark */
 .logo { letter-spacing: 0.01em; }
 .logo span { color: var(--ink-soft); font-weight: 400; margin: 0 2px; }

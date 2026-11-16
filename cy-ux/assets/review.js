@@ -4,7 +4,11 @@
     { id: 'studio', label: 'Studio', line: 'Financial software people can actually use.', mute: 0 },
     { id: 'stone', label: 'Stone', line: 'Twenty years of making complex finance simple to use.', mute: 3 },
     { id: 'slate', label: 'Slate', line: 'Complex finance, made clear.', mute: 0 },
-    { id: 'graphite', label: 'Graphite', line: 'I design the screens Wall Street works in.', mute: 0 }
+    { id: 'graphite', label: 'Graphite', line: 'I design the screens Wall Street works in.', mute: 0 },
+    { id: 'paper', label: 'Paper', line: 'Twenty years of making complex finance simple to use.', mute: 3 },
+    { id: 'mono', label: 'Mono', line: 'I design the screens Wall Street works in.', mute: 0 },
+    { id: 'dusk', label: 'Dusk', line: 'Complex finance, made clear.', mute: 0 },
+    { id: 'clay', label: 'Clay', line: 'Financial software people can actually use.', mute: 0 }
   ];
   var root = document.documentElement;
   var h1 = document.querySelector('[data-split]');
