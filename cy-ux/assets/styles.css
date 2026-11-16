@@ -593,22 +593,22 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 55; pointer-event
 :root[data-layout="halo"][data-type] .hero.hero-float h1 { font-size: clamp(44px, 8.8vw, 140px); max-width: 11ch; text-transform: uppercase; letter-spacing: -0.02em; line-height: .96; }
 
 /* Index-style work table shared by Poster and Ledger */
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-name { display: grid; grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1.5fr) auto; gap: var(--s-4); align-items: baseline; font-size: clamp(22px, 2.6vw, 36px); color: var(--ink); padding: .5em 0; letter-spacing: var(--display-tracking); }
-:root:is([data-layout="poster"],[data-layout="ledger"]) :is(.rn-no,.rn-proj,.rn-year) { display: block; font-family: var(--font-body); font-size: 14px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-item.is-active .rn-client { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js { min-height: 0; }
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-item { padding-right: 0; }
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-detail { position: static; width: auto; max-width: none; background: none; padding: 0 0 var(--s-6) 72px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s-6); align-content: start; }
-:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-item:not(.is-active) .roll-detail { display: none; }
-:root:is([data-layout="poster"],[data-layout="ledger"]) :is(.roll-detail img,.roll-empty) { grid-row: 1 / span 5; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-name { display: grid; grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1.5fr) auto; gap: var(--s-4); align-items: baseline; font-size: clamp(22px, 2.6vw, 36px); color: var(--ink); padding: .5em 0; letter-spacing: var(--display-tracking); }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) :is(.rn-no,.rn-proj,.rn-year) { display: block; font-family: var(--font-body); font-size: 14px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-item.is-active .rn-client { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-js { min-height: 0; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-js .roll-item { padding-right: 0; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-js .roll-detail { position: static; width: auto; max-width: none; background: none; padding: 0 0 var(--s-6) 72px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s-6); align-content: start; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-js .roll-item:not(.is-active) .roll-detail { display: none; }
+:root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) :is(.roll-detail img,.roll-empty) { grid-row: 1 / span 5; }
 
 @media (max-width: 900px) {
   :root[data-layout="poster"] .hero.hero-float .wrap, :root[data-layout="ledger"] .hero.hero-float .wrap { grid-template-columns: 1fr; }
   :root[data-layout="poster"] .hero.hero-float .lede, :root[data-layout="poster"] .hero.hero-float .actions, :root[data-layout="ledger"] .kicker, :root[data-layout="ledger"][data-type] .hero.hero-float h1, :root[data-layout="ledger"] .hero.hero-float .lede, :root[data-layout="ledger"] .hero.hero-float .actions { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; }
-  :root:is([data-layout="poster"],[data-layout="ledger"]) .roll-name { grid-template-columns: 32px minmax(0, 1fr) auto; }
-  :root:is([data-layout="poster"],[data-layout="ledger"]) .rn-proj { display: none; }
-  :root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-detail { grid-template-columns: 1fr; padding-left: 0; }
-  :root:is([data-layout="poster"],[data-layout="ledger"]) :is(.roll-detail img,.roll-empty) { grid-row: auto; }
+  :root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-name { grid-template-columns: 32px minmax(0, 1fr) auto; }
+  :root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .rn-proj { display: none; }
+  :root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) .roll-js .roll-detail { grid-template-columns: 1fr; padding-left: 0; }
+  :root:is([data-layout="poster"],[data-layout="ledger"],[data-layout="letter"],[data-layout="profile"]) :is(.roll-detail img,.roll-empty) { grid-row: auto; }
   :root[data-layout="ledger"] .proof-grid > div:nth-child(3) { border-left: 0; padding-left: 0; }
   :root[data-layout="ledger"] .proof-grid > div { border-top: 1px solid var(--line); }
 }
@@ -617,4 +617,67 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 55; pointer-event
   :root[data-layout="poster"] .corners { flex-wrap: wrap; top: 88px; }
   :root[data-layout="poster"] .corners span:nth-child(n+3) { display: none; }
   :root[data-layout="sentence"] .hero.hero-float, :root[data-layout="halo"] .hero.hero-float, :root[data-layout="ledger"] .hero.hero-float { padding-bottom: var(--s-8); }
+}
+
+/* ---------- Layouts drawn from the director site survey ---------- */
+.hero-portrait { display: none; }
+
+/* Profile: face, positioning sentence, and four numbers in the first screen */
+:root[data-layout="profile"] main { display: flex; flex-direction: column; }
+:root[data-layout="profile"] main > * { order: 3; }
+:root[data-layout="profile"] main > .hero { order: 1; }
+:root[data-layout="profile"] main > .proof { order: 2; }
+:root[data-layout="profile"] .float, :root[data-layout="profile"] .mega { display: none; }
+:root[data-layout="profile"] .hero.hero-float { text-align: left; min-height: 0; padding: var(--s-8) 0 var(--s-6); }
+:root[data-layout="profile"] .hero.hero-float .wrap { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); column-gap: var(--s-7); row-gap: var(--s-4); align-items: center; align-content: center; }
+:root[data-layout="profile"] .hero-portrait { display: flex; grid-row: 1 / span 4; align-items: center; justify-content: center; aspect-ratio: 4 / 5; border-radius: var(--r-lg); background: var(--surface); border: 1px dashed var(--line); color: var(--ink-soft); font-size: 14px; }
+:root[data-layout="profile"][data-type] .hero.hero-float h1 { font-size: clamp(32px, 4.4vw, 64px); max-width: 16ch; line-height: 1.04; }
+:root[data-layout="profile"] .hero.hero-float .lede { color: var(--ink-soft); font-size: 17px; max-width: 54ch; }
+:root[data-layout="profile"] .hero.hero-float .actions { justify-content: flex-start; }
+:root[data-layout="profile"] .proof { padding-bottom: var(--s-8); }
+:root[data-layout="profile"] .proof-grid { border: 0; padding: 0; gap: var(--s-4); }
+:root[data-layout="profile"] .proof-grid > div { background: var(--surface); border-radius: var(--r-lg); padding: var(--s-5); }
+:root[data-layout="profile"] .proof-grid dt { font-size: clamp(32px, 3.4vw, 48px); }
+
+/* Letter: plain text, a face, and a short list. No showpiece. */
+:root[data-layout="letter"] .float, :root[data-layout="letter"] .mega { display: none; }
+:root[data-layout="letter"] .hero.hero-float { text-align: left; min-height: 0; padding: var(--s-8) 0; }
+:root[data-layout="letter"] .hero.hero-float .wrap { max-width: 980px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 240px); column-gap: var(--s-8); row-gap: var(--s-4); align-items: start; }
+:root[data-layout="letter"] .hero-portrait { display: flex; grid-column: 2; grid-row: 1 / span 4; align-items: center; justify-content: center; aspect-ratio: 4 / 5; background: var(--surface); border: 1px dashed var(--line); color: var(--ink-soft); font-size: 14px; }
+:root[data-layout="letter"] .kicker { grid-column: 1; }
+:root[data-layout="letter"][data-type] .hero.hero-float h1 { grid-column: 1; font-family: var(--font-body); font-weight: 600; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -0.01em; line-height: 1.3; max-width: 28ch; }
+:root[data-layout="letter"] .hero.hero-float .lede { grid-column: 1; font-size: 17px; line-height: 1.7; max-width: 60ch; }
+:root[data-layout="letter"] .hero.hero-float .actions { grid-column: 1; justify-content: flex-start; }
+:root[data-layout="letter"] .statement-text { font-family: var(--font-body); font-weight: 400; font-size: 20px; line-height: 1.6; letter-spacing: 0; max-width: 60ch; }
+:root[data-layout="letter"] :is(.statement, .work-roll, .proof, .voices, .section, .contact) > .wrap { max-width: 980px; }
+:root[data-layout="letter"] .roll-name { font-family: var(--font-body); font-weight: 600; font-size: 18px; letter-spacing: 0; }
+
+/* Timeline: the career as a ledger of roles, every one open */
+:root[data-layout="timeline"] .float, :root[data-layout="timeline"] .mega { display: none; }
+:root[data-layout="timeline"] .hero.hero-float { text-align: left; min-height: 0; padding: clamp(96px, 16vh, 180px) 0 var(--s-8); }
+:root[data-layout="timeline"] .hero.hero-float .wrap { align-items: flex-start; }
+:root[data-layout="timeline"][data-type] .hero.hero-float h1 { font-size: clamp(40px, 6.4vw, 100px); max-width: 14ch; }
+:root[data-layout="timeline"] .hero.hero-float .lede { color: var(--ink-soft); max-width: 52ch; }
+:root[data-layout="timeline"] .hero.hero-float .actions { justify-content: flex-start; }
+:root[data-layout="timeline"] .roll-item { display: grid; grid-template-columns: 150px minmax(0, 1fr); column-gap: var(--s-6); padding: var(--s-5) 0 var(--s-6); }
+:root[data-layout="timeline"] .roll-item h3 { grid-column: 1 / -1; display: contents; }
+:root[data-layout="timeline"] .roll-name { display: contents; cursor: default; }
+:root[data-layout="timeline"] .rn-year { display: block; grid-column: 1; grid-row: 1; font-family: var(--font-body); font-size: 15px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0; padding-top: .5em; }
+:root[data-layout="timeline"] .rn-client { grid-column: 2; grid-row: 1; font-family: var(--font-display); font-weight: var(--display-weight); font-size: clamp(30px, 3.6vw, 52px); letter-spacing: var(--h1-tracking); line-height: 1.05; color: var(--ink); }
+:root[data-layout="timeline"] .roll-js { min-height: 0; }
+:root[data-layout="timeline"] .roll-js .roll-item { padding-right: 0; }
+:root[data-layout="timeline"] .roll-js .roll-detail, :root[data-layout="timeline"] .roll-js .roll-item:not(.is-active) .roll-detail { grid-column: 2; position: static; width: auto; max-width: none; background: none; padding: var(--s-4) 0 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); column-gap: var(--s-6); align-content: start; }
+:root[data-layout="timeline"] :is(.roll-detail img, .roll-empty) { grid-column: 2; grid-row: 1 / span 6; }
+:root[data-layout="timeline"] .roll-detail > :not(img):not(.roll-empty) { grid-column: 1; }
+
+@media (max-width: 900px) {
+  :root[data-layout="profile"] .hero.hero-float .wrap, :root[data-layout="letter"] .hero.hero-float .wrap { grid-template-columns: 1fr; }
+  :root[data-layout="profile"] .hero-portrait, :root[data-layout="letter"] .hero-portrait { grid-row: auto; grid-column: 1; max-width: 220px; }
+  :root[data-layout="timeline"] .roll-item { grid-template-columns: 1fr; }
+  :root[data-layout="timeline"] .rn-year, :root[data-layout="timeline"] .rn-client, :root[data-layout="timeline"] .roll-js .roll-detail, :root[data-layout="timeline"] .roll-js .roll-item:not(.is-active) .roll-detail { grid-column: 1; grid-row: auto; }
+  :root[data-layout="timeline"] .roll-js .roll-detail, :root[data-layout="timeline"] .roll-js .roll-item:not(.is-active) .roll-detail { grid-template-columns: 1fr; }
+  :root[data-layout="timeline"] :is(.roll-detail img, .roll-empty), :root[data-layout="timeline"] .roll-detail > :not(img):not(.roll-empty) { grid-column: 1; grid-row: auto; }
+}
+@media (max-width: 640px) {
+  :root[data-layout="profile"] .hero.hero-float, :root[data-layout="letter"] .hero.hero-float, :root[data-layout="timeline"] .hero.hero-float { padding-bottom: var(--s-7); }
 }
