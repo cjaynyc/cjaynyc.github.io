@@ -2,12 +2,18 @@
 (function () {
   // id, label, page colour, accent colour
   var PAL = [
-    ['studio', 'Studio', '#F4F4F2', '#3F4C7A'], ['stone', 'Stone', '#ECEAE6', '#5B6150'],
-    ['slate', 'Slate', '#E9ECEF', '#4A6078'], ['graphite', 'Graphite', '#1B1C1D', '#D2C6B2'],
-    ['paper', 'Paper', '#F7F5F0', '#141414'], ['moss', 'Moss', '#EDEEEC', '#2F5D50'],
-    ['dusk', 'Dusk', '#17161C', '#B9B0E0'], ['clay', 'Clay', '#EFE9E2', '#8F5440'],
-    ['fog', 'Fog', '#F1F3F3', '#3B6B69'], ['bone', 'Bone', '#F3F0EA', '#8A6B1F'],
-    ['ink', 'Ink', '#10151F', '#9DB7D9'], ['rose', 'Rose', '#F2EEEE', '#7C4A5E']
+    ['chalk', 'Chalk', '#F2F1EE', '#3A3835'],
+    ['putty', 'Putty', '#E8E4DD', '#6F675A'],
+    ['mushroom', 'Mushroom', '#E9E4E1', '#7A6A66'],
+    ['oat', 'Oat', '#EEE8DC', '#7A6E55'],
+    ['sage', 'Sage', '#E6E9E3', '#5F6E5C'],
+    ['lichen', 'Lichen', '#E4E9E7', '#56706B'],
+    ['mist', 'Mist', '#E6E9EC', '#5C6B7D'],
+    ['pewter', 'Pewter', '#E7E8E8', '#4C5151'],
+    ['heather', 'Heather', '#E8E6EA', '#6D6478'],
+    ['ash', 'Ash', '#1E1F1F', '#CFCDC6'],
+    ['peat', 'Peat', '#211E1B', '#C9BBA6'],
+    ['deep', 'Deep', '#1A1E22', '#B4C0CB']
   ];
   var TYP = [
     ['schibsted', 'Schibsted'], ['instrument', 'Instrument Serif'], ['geist', 'Geist'], ['hanken', 'Hanken'],
@@ -15,6 +21,7 @@
     ['fraunces', 'Fraunces'], ['space', 'Space Grotesk'], ['jakarta', 'Jakarta'], ['plex', 'IBM Plex']
   ];
   var SHP = [['round', 'Round'], ['soft', 'Soft'], ['square', 'Square']];
+  var TEX = [['none', 'None'], ['grain', 'Grain'], ['paper', 'Paper'], ['linen', 'Linen'], ['grid', 'Grid'], ['dots', 'Dots']];
   var LINES = [
     ['Financial software people can actually use.', 0],
     ['Twenty years of making complex finance simple to use.', 3],
@@ -22,12 +29,12 @@
     ['Complex finance, made clear.', 0]
   ];
   var root = document.documentElement, h1 = document.querySelector('[data-split]');
-  var st = { p: 'studio', t: 'schibsted', s: 'round', l: 0 };
+  var st = { p: 'chalk', t: 'schibsted', s: 'round', x: 'none', l: 0 };
   try {
-    var saved = JSON.parse(localStorage.getItem('cyux-mix') || 'null');
+    var saved = JSON.parse(localStorage.getItem('cyux-mix2') || 'null');
     if (saved) for (var k in st) if (saved[k] !== undefined) st[k] = saved[k];
   } catch (e) {}
-  location.search.replace(/[?&]([ptsl])=([a-z0-9]+)/g, function (_, k, v) { st[k] = k === 'l' ? parseInt(v, 10) : v; });
+  location.search.replace(/[?&]([ptsxl])=([a-z0-9]+)/g, function (_, k, v) { st[k] = k === 'l' ? parseInt(v, 10) : v; });
 
   var el = document.createElement('div');
   el.className = 'rv';
@@ -52,11 +59,11 @@
     });
     body.appendChild(sec);
   }
-  group('Colour', 'p', PAL); group('Typeface', 't', TYP); group('Corners', 's', SHP); group('Tagline', 'l', LINES, 'rv-lines');
+  group('Colour', 'p', PAL); group('Typeface', 't', TYP); group('Texture', 'x', TEX); group('Corners', 's', SHP); group('Tagline', 'l', LINES, 'rv-lines');
 
   function name(list, id) { for (var i = 0; i < list.length; i++) if (list[i][0] === id) return list[i][1]; return id; }
   function apply() {
-    root.setAttribute('data-palette', st.p); root.setAttribute('data-type', st.t); root.setAttribute('data-shape', st.s);
+    root.setAttribute('data-palette', st.p); root.setAttribute('data-type', st.t); root.setAttribute('data-shape', st.s); root.setAttribute('data-texture', st.x);
     var line = LINES[st.l] || LINES[0];
     if (h1 && (h1.getAttribute('aria-label') !== line[0] || h1.getAttribute('data-mute') !== String(line[1]))) {
       h1.setAttribute('data-mute', line[1]);
@@ -66,8 +73,8 @@
     Array.prototype.forEach.call(body.querySelectorAll('.rv-opt'), function (b) {
       b.setAttribute('aria-pressed', String(String(st[b.dataset.key]) === b.dataset.val));
     });
-    now.textContent = name(PAL, st.p) + ' · ' + name(TYP, st.t) + ' · ' + name(SHP, st.s);
-    try { localStorage.setItem('cyux-mix', JSON.stringify(st)); } catch (e) {}
+    now.textContent = name(PAL, st.p) + ' · ' + name(TYP, st.t) + ' · ' + name(SHP, st.s) + (st.x !== 'none' ? ' · ' + name(TEX, st.x) : '');
+    try { localStorage.setItem('cyux-mix2', JSON.stringify(st)); } catch (e) {}
   }
   toggle.addEventListener('click', function () {
     var open = body.hidden; body.hidden = !open;
