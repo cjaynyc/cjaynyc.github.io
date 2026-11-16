@@ -2,6 +2,7 @@
 (function () {
   // id, label, page colour, accent colour
   var PAL = [
+    ['gallery', 'Gallery', '#F4F3F1', '#0A0A0A'],
     ['chalk', 'Chalk', '#F2F1EE', '#3A3835'],
     ['putty', 'Putty', '#E8E4DD', '#6F675A'],
     ['mushroom', 'Mushroom', '#E9E4E1', '#7A6A66'],
@@ -16,7 +17,7 @@
     ['deep', 'Deep', '#1A1E22', '#B4C0CB']
   ];
   var TYP = [
-    ['schibsted', 'Schibsted'], ['instrument', 'Instrument Serif'], ['geist', 'Geist'], ['hanken', 'Hanken'],
+    ['tight', 'Inter Tight'],     ['schibsted', 'Schibsted'], ['instrument', 'Instrument Serif'], ['geist', 'Geist'], ['hanken', 'Hanken'],
     ['newsreader', 'Newsreader'], ['jetbrains', 'JetBrains Mono'], ['manrope', 'Manrope'], ['figtree', 'Figtree'],
     ['fraunces', 'Fraunces'], ['space', 'Space Grotesk'], ['jakarta', 'Jakarta'], ['plex', 'IBM Plex']
   ];
@@ -29,9 +30,9 @@
     ['Complex finance, made clear.', 0]
   ];
   var root = document.documentElement, h1 = document.querySelector('[data-split]');
-  var st = { p: 'chalk', t: 'schibsted', s: 'round', x: 'none', l: 0 };
+  var st = { p: 'gallery', t: 'tight', s: 'soft', x: 'none', l: 0 };
   try {
-    var saved = JSON.parse(localStorage.getItem('cyux-mix2') || 'null');
+    var saved = JSON.parse(localStorage.getItem('cyux-mix3') || 'null');
     if (saved) for (var k in st) if (saved[k] !== undefined) st[k] = saved[k];
   } catch (e) {}
   location.search.replace(/[?&]([ptsxl])=([a-z0-9]+)/g, function (_, k, v) { st[k] = k === 'l' ? parseInt(v, 10) : v; });
@@ -74,7 +75,7 @@
       b.setAttribute('aria-pressed', String(String(st[b.dataset.key]) === b.dataset.val));
     });
     now.textContent = name(PAL, st.p) + ' · ' + name(TYP, st.t) + ' · ' + name(SHP, st.s) + (st.x !== 'none' ? ' · ' + name(TEX, st.x) : '');
-    try { localStorage.setItem('cyux-mix2', JSON.stringify(st)); } catch (e) {}
+    try { localStorage.setItem('cyux-mix3', JSON.stringify(st)); } catch (e) {}
   }
   toggle.addEventListener('click', function () {
     var open = body.hidden; body.hidden = !open;
