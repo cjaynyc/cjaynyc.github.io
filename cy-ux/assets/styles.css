@@ -547,3 +547,74 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 55; pointer-event
 .desk-list strong { font-weight: 600; grid-column: 1; }
 .desk-list span { grid-column: 1; color: var(--ink-soft); }
 .desk-list em { grid-column: 2; grid-row: 1; font-style: normal; font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
+
+/* ---------- More layouts from the reference set ---------- */
+.hero-sentence, .corners { display: none; }
+
+/* Sentence: one statement with work thumbnails set inside the line */
+:root[data-layout="sentence"] .float, :root[data-layout="sentence"] .kicker, :root[data-layout="sentence"] .hero.hero-float .lede { display: none; }
+:root[data-layout="sentence"] .hero.hero-float h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+:root[data-layout="sentence"] .hero-sentence { display: block; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--h1-tracking); font-size: clamp(30px, 5vw, 78px); line-height: 1.16; max-width: 17em; text-wrap: balance; }
+:root[data-layout="sentence"] .hero-sentence img { display: inline-block; height: .92em; width: 1.24em; object-fit: cover; object-position: top; border-radius: .16em; vertical-align: -0.1em; margin: 0 .06em; }
+
+/* Poster: capitals, bracketed labels in the corners, giant section word */
+:root[data-layout="poster"] .float, :root[data-layout="poster"] .kicker { display: none; }
+:root[data-layout="poster"] .hero.hero-float { text-align: left; align-items: flex-end; min-height: 100vh; padding: 140px 0 var(--s-8); }
+:root[data-layout="poster"] .hero.hero-float .wrap { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s-7); align-items: end; }
+:root[data-layout="poster"][data-type] .hero.hero-float h1 { grid-column: 1 / -1; font-size: clamp(42px, 9.4vw, 168px); line-height: .88; max-width: none; text-transform: uppercase; letter-spacing: -0.04em; }
+:root[data-layout="poster"] .hero.hero-float .lede { grid-column: 2; grid-row: 2; font-size: 15px; max-width: 42ch; color: var(--ink-soft); }
+:root[data-layout="poster"] .hero.hero-float .actions { grid-column: 1; grid-row: 2; justify-content: flex-start; }
+:root[data-layout="poster"] .corners { display: flex; justify-content: space-between; gap: var(--s-4); position: absolute; top: 96px; left: var(--s-5); right: var(--s-5); z-index: 2; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); }
+:root:is([data-layout="poster"]) .work-roll .eyebrow { font-family: var(--font-display); font-weight: var(--display-weight); font-size: clamp(56px, 15vw, 240px); line-height: .84; letter-spacing: -0.06em; text-transform: none; color: var(--ink); margin: 0 0 var(--s-6) -0.04em; }
+:root[data-layout="poster"] .work-roll .wrap { max-width: none; }
+
+/* Ledger: institutional, numbers directly under the headline, ruled columns */
+:root[data-layout="ledger"] main { display: flex; flex-direction: column; }
+:root[data-layout="ledger"] main > * { order: 3; }
+:root[data-layout="ledger"] main > .hero { order: 1; }
+:root[data-layout="ledger"] main > .proof { order: 2; }
+:root[data-layout="ledger"] .float, :root[data-layout="ledger"] .mega { display: none; }
+:root[data-layout="ledger"] .hero.hero-float { text-align: left; min-height: 0; padding: clamp(96px, 16vh, 180px) 0 var(--s-8); }
+:root[data-layout="ledger"] .hero.hero-float .wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--s-5); row-gap: var(--s-5); align-items: end; }
+:root[data-layout="ledger"] .kicker { grid-column: 1 / -1; padding-bottom: var(--s-4); border-bottom: 1px solid var(--ink); width: 100%; }
+:root[data-layout="ledger"][data-type] .hero.hero-float h1 { grid-column: 1 / span 9; font-size: clamp(38px, 5.6vw, 88px); max-width: 15ch; line-height: 1.02; }
+:root[data-layout="ledger"] .hero.hero-float .lede { grid-column: 1 / span 6; color: var(--ink-soft); font-size: 17px; }
+:root[data-layout="ledger"] .hero.hero-float .actions { grid-column: 8 / -1; justify-content: flex-end; }
+:root[data-layout="ledger"] .proof-grid { gap: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); padding: 0; }
+:root[data-layout="ledger"] .proof-grid > div { padding: var(--s-5) var(--s-5) var(--s-6); border-left: 1px solid var(--line); }
+:root[data-layout="ledger"] .proof-grid > div:first-child { border-left: 0; padding-left: 0; }
+:root[data-layout="ledger"] .proof-grid dt { font-size: clamp(40px, 4.4vw, 68px); }
+
+/* Halo: soft blurred colour behind large type */
+:root[data-layout="halo"] .float, :root[data-layout="halo"] .mega { display: none; }
+:root[data-layout="halo"] .hero.hero-float::before { content: ""; position: absolute; inset: 8% 6%; z-index: 0; filter: blur(70px); opacity: .85; background: radial-gradient(38% 46% at 28% 42%, #C9B8A6 0, transparent 70%), radial-gradient(34% 44% at 62% 34%, #A8B6C6 0, transparent 70%), radial-gradient(32% 42% at 52% 68%, #C6ABB6 0, transparent 70%), radial-gradient(28% 36% at 76% 64%, #B6C4A8 0, transparent 70%); }
+:root.motion[data-layout="halo"] .hero.hero-float::before { animation: halo 18s ease-in-out infinite alternate; }
+@keyframes halo { to { transform: translate(3%, -4%) scale(1.08) rotate(6deg); } }
+:root[data-layout="halo"][data-type] .hero.hero-float h1 { font-size: clamp(44px, 8.8vw, 140px); max-width: 11ch; text-transform: uppercase; letter-spacing: -0.02em; line-height: .96; }
+
+/* Index-style work table shared by Poster and Ledger */
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-name { display: grid; grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1.5fr) auto; gap: var(--s-4); align-items: baseline; font-size: clamp(22px, 2.6vw, 36px); color: var(--ink); padding: .5em 0; letter-spacing: var(--display-tracking); }
+:root:is([data-layout="poster"],[data-layout="ledger"]) :is(.rn-no,.rn-proj,.rn-year) { display: block; font-family: var(--font-body); font-size: 14px; font-weight: 500; letter-spacing: 0; color: var(--ink-soft); }
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-item.is-active .rn-client { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js { min-height: 0; }
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-item { padding-right: 0; }
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-detail { position: static; width: auto; max-width: none; background: none; padding: 0 0 var(--s-6) 72px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s-6); align-content: start; }
+:root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-item:not(.is-active) .roll-detail { display: none; }
+:root:is([data-layout="poster"],[data-layout="ledger"]) :is(.roll-detail img,.roll-empty) { grid-row: 1 / span 5; }
+
+@media (max-width: 900px) {
+  :root[data-layout="poster"] .hero.hero-float .wrap, :root[data-layout="ledger"] .hero.hero-float .wrap { grid-template-columns: 1fr; }
+  :root[data-layout="poster"] .hero.hero-float .lede, :root[data-layout="poster"] .hero.hero-float .actions, :root[data-layout="ledger"] .kicker, :root[data-layout="ledger"][data-type] .hero.hero-float h1, :root[data-layout="ledger"] .hero.hero-float .lede, :root[data-layout="ledger"] .hero.hero-float .actions { grid-column: 1 / -1; grid-row: auto; justify-content: flex-start; }
+  :root:is([data-layout="poster"],[data-layout="ledger"]) .roll-name { grid-template-columns: 32px minmax(0, 1fr) auto; }
+  :root:is([data-layout="poster"],[data-layout="ledger"]) .rn-proj { display: none; }
+  :root:is([data-layout="poster"],[data-layout="ledger"]) .roll-js .roll-detail { grid-template-columns: 1fr; padding-left: 0; }
+  :root:is([data-layout="poster"],[data-layout="ledger"]) :is(.roll-detail img,.roll-empty) { grid-row: auto; }
+  :root[data-layout="ledger"] .proof-grid > div:nth-child(3) { border-left: 0; padding-left: 0; }
+  :root[data-layout="ledger"] .proof-grid > div { border-top: 1px solid var(--line); }
+}
+@media (max-width: 640px) {
+  :root[data-layout="poster"] .hero.hero-float { min-height: 0; padding: 150px 0 var(--s-7); }
+  :root[data-layout="poster"] .corners { flex-wrap: wrap; top: 88px; }
+  :root[data-layout="poster"] .corners span:nth-child(n+3) { display: none; }
+  :root[data-layout="sentence"] .hero.hero-float, :root[data-layout="halo"] .hero.hero-float, :root[data-layout="ledger"] .hero.hero-float { padding-bottom: var(--s-8); }
+}
