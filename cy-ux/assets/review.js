@@ -1,10 +1,9 @@
 /* Review bar: lets Chris compare looks in the preview. Not part of the final site. */
 (function () {
   var looks = [
-    { id: 'evergreen', label: 'Evergreen', line: 'Financial software people can actually use.', mute: 0 },
-    { id: 'editorial', label: 'Editorial', line: 'Twenty years of making complex finance simple to use.', mute: 3 },
-    { id: 'signal', label: 'Signal', line: 'I design the screens Wall Street works in.', mute: 0 },
-    { id: '', label: 'Original', line: 'A design partner for teams building financial products.', mute: 0 }
+    { id: 'stone', label: 'Stone', line: 'Twenty years of making complex finance simple to use.', mute: 3 },
+    { id: 'slate', label: 'Slate', line: 'Financial software people can actually use.', mute: 0 },
+    { id: 'graphite', label: 'Graphite', line: 'I design the screens Wall Street works in.', mute: 0 }
   ];
   var root = document.documentElement;
   var h1 = document.querySelector('[data-split]');
@@ -36,7 +35,7 @@
     bar.appendChild(b);
   });
   document.body.appendChild(bar);
-  var saved = 'evergreen';
+  var saved = 'stone';
   try { var v = localStorage.getItem('cyux-look'); if (v !== null) saved = v; } catch (e) {}
   var q = /[?&]look=([a-z]*)/.exec(location.search); if (q) saved = q[1];
   apply(looks.filter(function (l) { return l.id === saved; })[0] || looks[0]);
