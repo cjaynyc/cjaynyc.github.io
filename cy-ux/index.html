@@ -19,7 +19,7 @@
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Geist:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/styles.css">
 <script type="application/ld+json">
 {
@@ -71,10 +71,12 @@
   <div class="wrap">
     <p class="pill">UX practice of Chris Yellen, New York</p>
     <h1 data-split>A design partner for teams building financial products.</h1>
-    <p class="lede">CYUX designs trading, risk, and portfolio software that people can learn quickly and trust under pressure. 20+ years with the world's largest financial firms.</p>
-    <div class="actions">
-      <a class="btn btn-primary" href="mailto:chris@chrisyellen.com">Email Chris</a>
-      <a class="btn btn-plain" href="#work">See the work</a>
+    <div class="hero-side">
+      <p class="lede">CYUX designs trading, risk, and portfolio software that people can learn quickly and trust under pressure. 20+ years with the world's largest financial firms.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="mailto:chris@chrisyellen.com"><span>Email Chris</span><i aria-hidden="true">↘</i></a>
+        <a class="btn btn-plain" href="#work">See the work</a>
+      </div>
     </div>
     <div class="hero-shots" data-reveal>
       <figure>
@@ -106,6 +108,13 @@
       <li>Fidelity</li>
       <li>Advent</li>
     </ul>
+  </div>
+</section>
+
+<section class="statement" aria-labelledby="statement-title">
+  <div class="wrap">
+    <p class="eyebrow" id="statement-title">The practice</p>
+    <p class="statement-text" data-fill>For more than 20 years Chris Yellen has designed large-scale web and mobile products for financial firms, taking each one from concept to completion.</p>
   </div>
 </section>
 
@@ -178,33 +187,31 @@
   </div>
 </section>
 
-<section class="section" id="services" aria-labelledby="services-title">
+<section class="band" id="services" aria-labelledby="services-title" data-band data-tone="1">
   <div class="wrap">
-    <div class="section-head" data-reveal>
-      <p class="eyebrow">Services</p>
-      <h2 id="services-title">What CYUX does.</h2>
-      <p>Senior, hands-on design for teams that need to ship complex software.</p>
+    <div class="band-head">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h2 id="services-title">Senior design, hands on.</h2>
+      </div>
+      <p>CYUX works with product, technology, and business teams that need to ship complex software. Pick a service to see what it covers.</p>
     </div>
-    <div class="services">
-      <article class="service" data-reveal>
-        <p class="num">01</p>
-        <h3>Product design</h3>
-        <p>Interaction and visual design for web and mobile applications, from first wireframe to final interface.</p>
+    <div class="tabs">
+      <article class="tab" data-tone="1">
+        <h3><button type="button" aria-expanded="true" aria-controls="svc-1">Product design</button></h3>
+        <p id="svc-1">Interaction and visual design for web and mobile applications, from first wireframe to final interface.</p>
       </article>
-      <article class="service" data-reveal>
-        <p class="num">02</p>
-        <h3>Design systems</h3>
-        <p>Component libraries and guidelines that keep many applications consistent across a firm.</p>
+      <article class="tab" data-tone="2">
+        <h3><button type="button" aria-expanded="false" aria-controls="svc-2">Design systems</button></h3>
+        <p id="svc-2" hidden>Component libraries and guidelines that keep many applications consistent across a firm.</p>
       </article>
-      <article class="service" data-reveal>
-        <p class="num">03</p>
-        <h3>Research and testing</h3>
-        <p>Stakeholder interviews, requirements workshops, and usability testing with the people who use the product.</p>
+      <article class="tab" data-tone="3">
+        <h3><button type="button" aria-expanded="false" aria-controls="svc-3">Research and testing</button></h3>
+        <p id="svc-3" hidden>Stakeholder interviews, requirements workshops, and usability testing with the people who use the product.</p>
       </article>
-      <article class="service" data-reveal>
-        <p class="num">04</p>
-        <h3>Prototyping</h3>
-        <p>Clickable prototypes that let teams test ideas and win support before development starts.</p>
+      <article class="tab" data-tone="4">
+        <h3><button type="button" aria-expanded="false" aria-controls="svc-4">Prototyping</button></h3>
+        <p id="svc-4" hidden>Clickable prototypes that let teams test ideas and win support before development starts.</p>
       </article>
     </div>
   </div>
@@ -256,7 +263,7 @@
     <h2 id="contact-title">Have a product that needs to be clearer?</h2>
     <p>Tell Chris what you are building. He replies to every message personally.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="mailto:chris@chrisyellen.com">chris@chrisyellen.com</a>
+      <a class="btn btn-primary" href="mailto:chris@chrisyellen.com"><span>chris@chrisyellen.com</span><i aria-hidden="true">↘</i></a>
       <a class="btn btn-plain" href="https://www.linkedin.com/in/chrisyellen/" rel="noopener">LinkedIn</a>
     </div>
   </div>
@@ -276,6 +283,7 @@
   </div>
 </footer>
 
+<script src="assets/site.js" defer></script>
 <script src="assets/motion.js" defer></script>
 <script src="assets/review.js" defer></script>
 </body>

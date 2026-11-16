@@ -40,6 +40,30 @@
     items.forEach(function (el) { el.classList.add('in'); });
   }
 
+  // 2b. Statement: words light up as the paragraph scrolls through the viewport
+  var fill = document.querySelector('[data-fill]');
+  if (fill) {
+    var text = fill.textContent.trim();
+    fill.setAttribute('aria-label', text);
+    fill.textContent = '';
+    var ws = text.split(/\s+/).map(function (w) {
+      var sp = document.createElement('span');
+      sp.className = 'w'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w;
+      fill.appendChild(sp); fill.appendChild(document.createTextNode(' '));
+      return sp;
+    });
+    var ticking = false;
+    function light() {
+      ticking = false;
+      var r = fill.getBoundingClientRect(), vh = window.innerHeight;
+      var prog = (vh * 0.85 - r.top) / (vh * 0.5 + r.height);
+      var n = Math.round(Math.max(0, Math.min(1, prog)) * ws.length);
+      ws.forEach(function (sp, i) { sp.classList.toggle('lit', i < n); });
+    }
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(light); } }, { passive: true });
+    light();
+  }
+
   // 3. Hero: slow flowing colour field drawn with a WebGL shader
   var canvas = document.querySelector('.hero-canvas');
   if (!canvas) return;
