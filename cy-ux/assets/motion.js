@@ -41,8 +41,7 @@
   }
 
   // 2b. Statement: words light up as the paragraph scrolls through the viewport
-  var fill = document.querySelector('[data-fill]');
-  if (fill) {
+  Array.prototype.forEach.call(document.querySelectorAll('[data-fill]'), function (fill) {
     var text = fill.textContent.trim();
     fill.setAttribute('aria-label', text);
     fill.textContent = '';
@@ -62,7 +61,7 @@
     }
     window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(light); } }, { passive: true });
     light();
-  }
+  });
 
   // 3. Hero: slow flowing colour field drawn with a WebGL shader
   var canvas = document.querySelector('.hero-canvas');

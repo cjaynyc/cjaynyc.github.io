@@ -22,6 +22,7 @@
     ['fraunces', 'Fraunces'], ['space', 'Space Grotesk'], ['jakarta', 'Jakarta'], ['plex', 'IBM Plex']
   ];
   var LAY = [['float', 'Float', {p:'gallery',t:'tight',s:'soft'}], ['index', 'Index', {p:'chalk',t:'instrument',s:'square'}], ['editorial', 'Editorial', {p:'gallery',t:'newsreader',s:'square'}], ['cinema', 'Cinema', {p:'ash',t:'tight',s:'soft'}]];
+  var CON = [['firm', 'By firm'], ['street', 'Wall Street']];
   var SHP = [['round', 'Round'], ['soft', 'Soft'], ['square', 'Square']];
   var TEX = [['none', 'None'], ['grain', 'Grain'], ['paper', 'Paper'], ['linen', 'Linen'], ['grid', 'Grid'], ['dots', 'Dots']];
   var LINES = [
@@ -31,12 +32,12 @@
     ['Complex finance, made clear.', 0]
   ];
   var root = document.documentElement, h1 = document.querySelector('[data-split]');
-  var st = { y: 'float', p: 'gallery', t: 'tight', s: 'soft', x: 'none', l: 0 };
+  var st = { c: 'firm', y: 'float', p: 'gallery', t: 'tight', s: 'soft', x: 'none', l: 0 };
   try {
-    var saved = JSON.parse(localStorage.getItem('cyux-mix4') || 'null');
+    var saved = JSON.parse(localStorage.getItem('cyux-mix5') || 'null');
     if (saved) for (var k in st) if (saved[k] !== undefined) st[k] = saved[k];
   } catch (e) {}
-  location.search.replace(/[?&]([yptsxl])=([a-z0-9]+)/g, function (_, k, v) { st[k] = k === 'l' ? parseInt(v, 10) : v; });
+  location.search.replace(/[?&]([cyptsxl])=([a-z0-9]+)/g, function (_, k, v) { st[k] = k === 'l' ? parseInt(v, 10) : v; });
 
   var el = document.createElement('div');
   el.className = 'rv';
@@ -56,16 +57,18 @@
         b.appendChild(sw);
       }
       b.appendChild(document.createTextNode(key === 'l' ? it[0] : it[1]));
-      b.addEventListener('click', function () { st[key] = key === 'l' ? i : it[0]; if (key === 'y') { for (var q in it[2]) st[q] = it[2][q]; } apply(); });
+      b.addEventListener('click', function () { st[key] = key === 'l' ? i : it[0]; if (key === 'y') { for (var q in it[2]) st[q] = it[2][q]; } if (key === 'c') { st.l = it[0] === 'street' ? 2 : 0; } apply(); });
       g.appendChild(b);
     });
     body.appendChild(sec);
   }
-  group('Layout', 'y', LAY); group('Colour', 'p', PAL); group('Typeface', 't', TYP); group('Texture', 'x', TEX); group('Corners', 's', SHP); group('Tagline', 'l', LINES, 'rv-lines');
+  group('Content', 'c', CON); group('Layout', 'y', LAY); group('Colour', 'p', PAL); group('Typeface', 't', TYP); group('Texture', 'x', TEX); group('Corners', 's', SHP); group('Tagline', 'l', LINES, 'rv-lines');
 
   function name(list, id) { for (var i = 0; i < list.length; i++) if (list[i][0] === id) return list[i][1]; return id; }
   function apply() {
-    root.setAttribute('data-layout', st.y); root.setAttribute('data-palette', st.p); root.setAttribute('data-type', st.t); root.setAttribute('data-shape', st.s); root.setAttribute('data-texture', st.x);
+    root.setAttribute('data-content', st.c);
+    var wf = document.querySelector('section[data-c="firm"].work-roll'), ws = document.querySelector('section[data-c="street"].work-roll');
+    if (wf && ws) { wf.id = st.c === 'street' ? 'work-firm' : 'work'; ws.id = st.c === 'street' ? 'work' : 'work-street'; } root.setAttribute('data-layout', st.y); root.setAttribute('data-palette', st.p); root.setAttribute('data-type', st.t); root.setAttribute('data-shape', st.s); root.setAttribute('data-texture', st.x);
     var line = LINES[st.l] || LINES[0];
     if (h1 && (h1.getAttribute('aria-label') !== line[0] || h1.getAttribute('data-mute') !== String(line[1]))) {
       h1.setAttribute('data-mute', line[1]);
@@ -75,8 +78,8 @@
     Array.prototype.forEach.call(body.querySelectorAll('.rv-opt'), function (b) {
       b.setAttribute('aria-pressed', String(String(st[b.dataset.key]) === b.dataset.val));
     });
-    now.textContent = name(LAY, st.y) + ' · ' + name(PAL, st.p) + ' · ' + name(TYP, st.t) + ' · ' + name(SHP, st.s) + (st.x !== 'none' ? ' · ' + name(TEX, st.x) : '');
-    try { localStorage.setItem('cyux-mix4', JSON.stringify(st)); } catch (e) {}
+    now.textContent = name(CON, st.c) + ' · ' + name(LAY, st.y) + ' · ' + name(PAL, st.p) + ' · ' + name(TYP, st.t) + ' · ' + name(SHP, st.s) + (st.x !== 'none' ? ' · ' + name(TEX, st.x) : '');
+    try { localStorage.setItem('cyux-mix5', JSON.stringify(st)); } catch (e) {}
   }
   toggle.addEventListener('click', function () {
     var open = body.hidden; body.hidden = !open;

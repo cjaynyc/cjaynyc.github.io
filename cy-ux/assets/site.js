@@ -20,8 +20,7 @@
 
 /* Work list: hovering, focusing or pressing a name shows its project. */
 (function () {
-  var roll = document.querySelector('[data-roll]');
-  if (!roll) return;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-roll]'), function (roll) {
   roll.classList.add('roll-js');
   var items = Array.prototype.slice.call(roll.querySelectorAll('.roll-item'));
   function show(item) {
@@ -37,6 +36,7 @@
     b.addEventListener('click', function () { show(it); });
     b.addEventListener('focus', function () { show(it); });
     if (hover) b.addEventListener('mouseenter', function () { show(it); });
+  });
   });
 })();
 

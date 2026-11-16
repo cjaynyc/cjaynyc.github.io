@@ -539,3 +539,11 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 55; pointer-event
 .voice figcaption span { color: var(--ink-soft); }
 .ph { color: var(--ink-soft); }
 @media (max-width: 640px) { .voices-grid { grid-template-columns: 1fr; gap: var(--s-6); } }
+
+/* Content versions */
+:root:not([data-content="street"]) [data-c="street"], :root[data-content="street"] [data-c="firm"] { display: none !important; }
+.desk-list { display: flex; flex-direction: column; margin-top: var(--s-2); }
+.desk-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s-4); padding: var(--s-3) 0; border-top: 1px solid var(--line); font-size: 15px; }
+.desk-list strong { font-weight: 600; grid-column: 1; }
+.desk-list span { grid-column: 1; color: var(--ink-soft); }
+.desk-list em { grid-column: 2; grid-row: 1; font-style: normal; font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
