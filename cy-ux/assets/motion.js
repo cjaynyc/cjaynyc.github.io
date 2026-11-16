@@ -5,15 +5,15 @@
   var root = document.documentElement;
   root.classList.add('motion');
 
-  // 1. Headline: reveal word by word
-  var h1 = document.querySelector('[data-split]');
-  if (h1) {
-    var words = h1.textContent.trim().split(/\s+/);
+  // 1. Headline: reveal word by word. data-mute="N" greys the last N words.
+  function split(h1) {
+    var words = (h1.getAttribute('aria-label') || h1.textContent).trim().split(/\s+/);
+    var mute = parseInt(h1.getAttribute('data-mute') || '0', 10);
     h1.setAttribute('aria-label', words.join(' '));
     h1.textContent = '';
     words.forEach(function (w, i) {
       var outer = document.createElement('span');
-      outer.className = 'word';
+      outer.className = 'word' + (i >= words.length - mute ? ' mute' : '');
       outer.setAttribute('aria-hidden', 'true');
       var inner = document.createElement('span');
       inner.textContent = w;
@@ -23,6 +23,9 @@
       h1.appendChild(document.createTextNode(' '));
     });
   }
+  var h1 = document.querySelector('[data-split]');
+  if (h1) split(h1);
+  window.cyuxSplit = split;
 
   // 2. Sections: fade up as they scroll into view
   var items = document.querySelectorAll('[data-reveal]');
@@ -45,7 +48,7 @@
 
   var vs = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
   var fs = [
-    'precision mediump float;uniform vec2 r;uniform float t;',
+    'precision mediump float;uniform vec2 r;uniform float t;uniform vec3 bg,g,o;',
     'float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
     'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);',
     'return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}',
@@ -54,7 +57,7 @@
     'float w=fbm(p*1.2-t*.02);',
     'float a=fbm(p+vec2(t*.03,t*.02)+w);',
     'float b=fbm(p*.8+7.-vec2(t*.025,0.)+w*.5);',
-    'vec3 bg=vec3(.933,.949,.937),g=vec3(.76,.86,.82),o=vec3(.97,.83,.75);',
+    
     'vec3 c=mix(bg,g,smoothstep(.38,.75,a));',
     'c=mix(c,o,smoothstep(.58,.85,b)*.55);',
     'gl_FragColor=vec4(c,1.);}'
@@ -77,6 +80,17 @@
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   var uR = gl.getUniformLocation(prog, 'r'), uT = gl.getUniformLocation(prog, 't');
+  // Colours come from the CSS tokens --sh-1, --sh-2, --sh-3
+  function colours() {
+    var cs = getComputedStyle(root);
+    ['bg', 'g', 'o'].forEach(function (name, i) {
+      var hex = cs.getPropertyValue('--sh-' + (i + 1)).trim().replace('#', '');
+      var n = parseInt(hex, 16);
+      gl.uniform3f(gl.getUniformLocation(prog, name), (n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255);
+    });
+  }
+  colours();
+  window.cyuxColours = colours;
 
   function resize() {
     // Half resolution: the field is soft, so this is invisible and cheap.
