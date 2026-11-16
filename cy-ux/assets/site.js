@@ -1,7 +1,6 @@
 /* Services band: one card open at a time; the band takes the open card's colour. */
 (function () {
-  var band = document.querySelector('[data-band]');
-  if (!band) return;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-band]'), function (band) {
   var tabs = Array.prototype.slice.call(band.querySelectorAll('.tab'));
   function open(tab) {
     tabs.forEach(function (t) {
@@ -16,6 +15,7 @@
     t.querySelector('button').addEventListener('click', function () { open(t); });
   });
   open(tabs[0]);
+  });
 })();
 
 /* Work list: hovering, focusing or pressing a name shows its project. */

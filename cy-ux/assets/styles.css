@@ -541,7 +541,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 55; pointer-event
 @media (max-width: 640px) { .voices-grid { grid-template-columns: 1fr; gap: var(--s-6); } }
 
 /* Content versions */
-:root:not([data-content="street"]) [data-c="street"], :root[data-content="street"] [data-c="firm"] { display: none !important; }
+:root[data-content="ai"] [data-c]:not([data-c~="ai"]), :root[data-content="firm"] [data-c]:not([data-c~="firm"]), :root[data-content="street"] [data-c]:not([data-c~="street"]), :root:not([data-content]) [data-c]:not([data-c~="ai"]) { display: none !important; }
 .desk-list { display: flex; flex-direction: column; margin-top: var(--s-2); }
 .desk-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s-4); padding: var(--s-3) 0; border-top: 1px solid var(--line); font-size: 15px; }
 .desk-list strong { font-weight: 600; grid-column: 1; }
