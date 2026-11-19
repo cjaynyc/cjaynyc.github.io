@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cy-ux.com/sitemap.xml
